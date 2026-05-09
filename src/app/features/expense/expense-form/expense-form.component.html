@@ -1,0 +1,116 @@
+<div class="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <!-- Header -->
+  <div class="flex items-center space-x-6">
+    <button routerLink="/expenses" class="w-12 h-12 rounded-2xl bg-white dark:bg-gray-900 transition-colors border border-slate-200 dark:border-gray-800 shadow-sm flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Edit Transaction</h1>
+      <p class="text-slate-500 dark:text-gray-400 text-sm font-medium">Update the details of your expense.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white dark:bg-gray-900 transition-colors rounded-[2.5rem] shadow-xl dark:shadow-slate-400/40/50 dark:shadow-gray-950/50 border border-slate-100 dark:border-gray-800 p-10">
+    <form (ngSubmit)="save()" class="space-y-8">
+      
+      <!-- Basic Details -->
+      <div class="grid grid-cols-1 gap-6">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Title</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">shopping_bag</span>
+            <input 
+              name="title" 
+              [(ngModel)]="expense.title" 
+              placeholder="What did you buy?" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 placeholder:text-slate-300"
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Amount ({{ expense.currency }})</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">payments</span>
+            <input 
+              name="amount" 
+              type="number"
+              [(ngModel)]="expense.amount" 
+              placeholder="0.00" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-black text-slate-800 dark:text-white"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Category</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 z-10 pointer-events-none">category</span>
+            <select 
+              name="categoryId" 
+              [(ngModel)]="expense.categoryId" 
+              class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none"
+            >
+              <option [ngValue]="0" disabled>Select Category</option>
+              @for (cat of categories(); track cat.categoryId) {
+                <option [ngValue]="cat.categoryId">{{ cat.icon }} {{ cat.name }}</option>
+              }
+            </select>
+            <span class="absolute right-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 pointer-events-none">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Date (Read-Only)</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">calendar_month</span>
+            <input 
+              name="date" 
+              type="date"
+              [ngModel]="expense.date" 
+              disabled
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-100 dark:bg-gray-800 border-none text-sm font-bold text-slate-500 dark:text-gray-400 cursor-not-allowed opacity-70"
+            >
+          </div>
+          <p class="text-[10px] px-2 text-slate-400">The date and time of an expense cannot be changed.</p>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Payment Method</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 z-10 pointer-events-none">wallet</span>
+            <select 
+              name="paymentMethod" 
+              [(ngModel)]="expense.paymentMethod" 
+              class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none"
+            >
+              <option value="CASH">Cash</option>
+              <option value="CARD">Card</option>
+              <option value="UPI">UPI</option>
+              <option value="BANK">Bank Transfer</option>
+              <option value="WALLET">Digital Wallet</option>
+            </select>
+            <span class="absolute right-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 pointer-events-none">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-6">
+        <button 
+          type="submit" 
+          [disabled]="loading() || !expense.title || !expense.amount || !expense.categoryId"
+          class="w-full py-4 rounded-2xl bg-emerald-600 text-white font-black shadow-lg dark:shadow-emerald-400/50 hover:bg-emerald-700 hover:shadow-xl hover:dark:shadow-emerald-400/50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        >
+          <span *ngIf="loading()" class="material-symbols-rounded animate-spin">progress_activity</span>
+          <span>{{ loading() ? 'Saving Changes...' : 'Save Changes' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

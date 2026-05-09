@@ -1,0 +1,156 @@
+<div class="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <!-- Header -->
+  <div class="flex items-center space-x-6">
+    <button routerLink="/categories" class="w-12 h-12 rounded-2xl bg-white dark:bg-gray-900 transition-colors border border-slate-200 dark:border-gray-800 shadow-sm flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{{ isEdit() ? 'Edit Configuration' : 'Create New Category' }}</h1>
+      <p class="text-slate-500 dark:text-gray-400 text-sm font-medium">Define how you want to track your transactions.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white dark:bg-gray-900 transition-colors rounded-[2.5rem] shadow-xl dark:shadow-slate-400/40/50 dark:shadow-gray-950/50 border border-slate-100 dark:border-gray-800 p-10">
+    <form (ngSubmit)="save()" class="space-y-10">
+      
+      <!-- Type Toggle -->
+      <div class="space-y-4">
+        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Transaction Type</label>
+        <div class="grid grid-cols-2 gap-4 p-1.5 bg-slate-50 dark:bg-slate-900 transition-colors rounded-3xl">
+          <button 
+            type="button" 
+            (click)="category.type = 'EXPENSE'" 
+            [class]="category.type === 'EXPENSE' ? 'bg-white dark:bg-gray-900 transition-colors text-rose-600 shadow-md' : 'text-slate-500 dark:text-gray-400 hover:bg-white/50'"
+            class="py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center space-x-2"
+          >
+            <span class="material-symbols-rounded text-lg">payments</span>
+            <span>Expense</span>
+          </button>
+          <button 
+            type="button" 
+            (click)="category.type = 'INCOME'" 
+            [class]="category.type === 'INCOME' ? 'bg-white dark:bg-gray-900 transition-colors text-emerald-600 shadow-md' : 'text-slate-500 dark:text-gray-400 hover:bg-white/50'"
+            class="py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center space-x-2"
+          >
+            <span class="material-symbols-rounded text-lg">account_balance_wallet</span>
+            <span>Income</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Identity -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Category Name</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">label</span>
+            <input 
+              name="name" 
+              [(ngModel)]="category.name" 
+              placeholder="e.g. Subscriptions" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 placeholder:text-slate-300"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Visual Icon</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">face</span>
+            <input 
+              name="icon" 
+              [(ngModel)]="category.icon" 
+              placeholder="🍔" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700"
+            >
+          </div>
+          <!-- Emoji Presets -->
+          <div class="mt-3 p-3 bg-white dark:bg-gray-900 transition-colors border border-slate-100 dark:border-gray-800 rounded-2xl flex flex-wrap gap-2 shadow-sm">
+            <button *ngFor="let emoji of ['🍔', '✈️', '🛒', '☕', '💡', '🏥', '🎮', '👗', '🏠', '🚗', '🎓', '🐾', '📱', '🎁', '⚽']" 
+                    type="button" 
+                    (click)="category.icon = emoji" 
+                    class="w-10 h-10 flex items-center justify-center text-xl rounded-xl hover:bg-slate-100 dark:bg-gray-800 transition-colors focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+              {{ emoji }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Style & Limit -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Theme Color</label>
+          <div class="flex items-center space-x-3">
+            <div class="relative w-14 h-14 shrink-0">
+              <input 
+                name="colorCode" 
+                [ngModel]="category.colorCode || '#000000'" 
+                (ngModelChange)="category.colorCode = $event"
+                type="color" 
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              >
+              <div 
+                [style.backgroundColor]="category.colorCode" 
+                class="w-full h-full rounded-2xl shadow-inner border-2 border-white flex items-center justify-center"
+              >
+                <span class="material-symbols-rounded text-white/50 text-xl">palette</span>
+              </div>
+            </div>
+            <input 
+              name="colorHex" 
+              [(ngModel)]="category.colorCode" 
+              placeholder="#6366F1" 
+              class="flex-1 px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-xs font-black tracking-widest text-slate-500 dark:text-gray-400"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Monthly Target</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">₹</span>
+            <input 
+              name="budgetLimit" 
+              [(ngModel)]="category.budgetLimit" 
+              type="number" 
+              placeholder="0.00" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-black text-slate-800 dark:text-white"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="pt-6">
+        <button 
+          type="submit" 
+          [disabled]="loading() || !category.name" 
+          class="w-full py-5 bg-emerald-600 text-white rounded-3xl font-black text-sm hover:bg-emerald-700 transition-all shadow-xl dark:shadow-emerald-400/40 disabled:opacity-50 disabled:shadow-none flex items-center justify-center group"
+        >
+          @if (loading()) {
+            <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          } @else {
+            <span class="material-symbols-rounded mr-2 group-hover:rotate-12 transition-transform">task_alt</span>
+            <span>{{ isEdit() ? 'Save Configuration' : 'Confirm & Create' }}</span>
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+  
+  <!-- Preview Card -->
+  <div class="bg-slate-50 dark:bg-slate-900 transition-colors p-6 rounded-3xl border border-dashed border-slate-200 dark:border-gray-800 flex items-center justify-between opacity-60">
+    <div class="flex items-center space-x-4">
+      <div [style.backgroundColor]="category.colorCode" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl text-white shadow-lg">
+        {{ category.icon || '?' }}
+      </div>
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Preview</p>
+        <p class="text-sm font-black text-slate-800 dark:text-white">{{ category.name || 'Your Category' }}</p>
+      </div>
+    </div>
+    <span class="text-xs font-black text-slate-400">{{ category.budgetLimit | currency }} Limit</span>
+  </div>
+</div>

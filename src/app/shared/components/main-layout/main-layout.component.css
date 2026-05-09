@@ -1,0 +1,31 @@
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+:host {
+  display: block;
+}
+
+/* Animation for sidebar transitions */
+aside {
+  will-change: width;
+}
+
+main {
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(161, 84%, 93%, 0.3) 0, transparent 50%), 
+    radial-gradient(at 100% 100%, hsla(232, 84%, 93%, 0.3) 0, transparent 50%);
+}

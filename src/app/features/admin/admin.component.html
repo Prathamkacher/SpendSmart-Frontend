@@ -1,0 +1,208 @@
+<div class="admin-container">
+  <div class="admin-sidebar">
+    <div class="sidebar-header">
+      <span class="material-symbols-rounded">admin_panel_settings</span>
+      <h2>Admin Panel</h2>
+    </div>
+    
+    <nav class="admin-nav">
+      <button [class.active]="activeSection === 'dashboard'" (click)="switchSection('dashboard')">
+        <span class="material-symbols-rounded">dashboard</span> Overview
+      </button>
+      <button [class.active]="activeSection === 'users'" (click)="switchSection('users')">
+        <span class="material-symbols-rounded">group</span> Users
+      </button>
+      <button [class.active]="activeSection === 'transactions'" (click)="switchSection('transactions')">
+        <span class="material-symbols-rounded">receipt_long</span> Transactions
+      </button>
+      <button [class.active]="activeSection === 'notifications'" (click)="switchSection('notifications')">
+        <span class="material-symbols-rounded">campaign</span> Notifications
+      </button>
+      <button [class.active]="activeSection === 'reports'" (click)="switchSection('reports')">
+        <span class="material-symbols-rounded">description</span> Reports
+      </button>
+    </nav>
+  </div>
+
+  <main class="admin-main">
+    <header class="admin-header">
+      <h1>{{ activeSection | titlecase }}</h1>
+      <div class="header-actions" *ngIf="activeSection === 'dashboard'">
+        <button class="refresh-btn" (click)="loadData()" [class.spinning]="loading">
+          <span class="material-symbols-rounded">refresh</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content" [ngSwitch]="activeSection">
+      
+      <!-- Dashboard Overview -->
+      <div *ngSwitchCase="'dashboard'" class="dashboard-grid">
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-icon users"><span class="material-symbols-rounded">group</span></div>
+            <div class="stat-info">
+              <span class="label">Total Users</span>
+              <h3 class="value">{{ analytics?.totalUsers || 0 }}</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon trans"><span class="material-symbols-rounded">swap_horiz</span></div>
+            <div class="stat-info">
+              <span class="label">Total Transactions</span>
+              <h3 class="value">{{ analytics?.totalTransactions || 0 }}</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon income"><span class="material-symbols-rounded">trending_up</span></div>
+            <div class="stat-info">
+              <span class="label">Total Income</span>
+              <h3 class="value">₹{{ analytics?.totalIncome | number:'1.0-0' }}</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon expense"><span class="material-symbols-rounded">trending_down</span></div>
+            <div class="stat-info">
+              <span class="label">Total Expenses</span>
+              <h3 class="value">₹{{ analytics?.totalExpenses | number:'1.0-0' }}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-container card">
+          <h3>User Registration Trend</h3>
+          <div class="trend-list">
+            <div class="trend-item" *ngFor="let month of getRegistrationLabels()">
+              <span class="month">{{ month }}</span>
+              <div class="bar-bg">
+                <div class="bar" [style.width.%]="(analytics!.userRegistrationTrend[month] / analytics!.totalUsers) * 100"></div>
+              </div>
+              <span class="count">{{ analytics!.userRegistrationTrend[month] }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management -->
+      <div *ngSwitchCase="'users'" class="card table-card">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>
+                  <div class="user-cell">
+                    <img [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="">
+                    <span>{{ user.fullName }}</span>
+                  </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td><span class="badge" [ngClass]="user.role">{{ user.role }}</span></td>
+                <td>
+                  <span class="status-indicator" [class.active]="user.isActive"></span>
+                  {{ user.isActive ? 'Active' : 'Suspended' }}
+                </td>
+                <td>
+                  <div class="actions">
+                    <button *ngIf="user.isActive" class="action-btn suspend" (click)="suspendUser(user.userId)" title="Suspend">
+                      <span class="material-symbols-rounded">block</span>
+                    </button>
+                    <button *ngIf="!user.isActive" class="action-btn activate" (click)="activateUser(user.userId)" title="Activate">
+                      <span class="material-symbols-rounded">check_circle</span>
+                    </button>
+                    <button class="action-btn delete" (click)="deleteUser(user.userId)" title="Delete">
+                      <span class="material-symbols-rounded">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Transactions View -->
+      <div *ngSwitchCase="'transactions'" class="card table-card">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>User ID</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tx of transactions">
+                <td>{{ tx.date | date:'shortDate' }}</td>
+                <td>{{ tx.userId }}</td>
+                <td><span class="badge" [ngClass]="tx.type">{{ tx.type }}</span></td>
+                <td [class.income-text]="tx.type === 'INCOME'" [class.expense-text]="tx.type === 'EXPENSE'">
+                  {{ tx.type === 'EXPENSE' ? '-' : '+' }}₹{{ tx.amount }}
+                </td>
+                <td>{{ tx.category }}</td>
+                <td class="truncate">{{ tx.description }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Notifications Panel -->
+      <div *ngSwitchCase="'notifications'" class="card form-card">
+        <h3>Broadcast System Notification</h3>
+        <p class="subtitle">This will be sent to all active users on the platform.</p>
+        
+        <div class="form-group">
+          <label>Notification Title</label>
+          <input type="text" [(ngModel)]="notifTitle" placeholder="e.g. System Maintenance">
+        </div>
+        
+        <div class="form-group">
+          <label>Message Content</label>
+          <textarea [(ngModel)]="notifMessage" rows="4" placeholder="Enter the message detail..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Severity Level</label>
+          <select [(ngModel)]="notifSeverity">
+            <option value="INFO">Information (Blue)</option>
+            <option value="SUCCESS">Success (Green)</option>
+            <option value="WARNING">Warning (Orange)</option>
+            <option value="CRITICAL">Critical (Red)</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" (click)='sendGlobalNotification()'>
+          <span class="material-symbols-rounded">send</span> Send to All Users
+        </button>
+      </div>
+
+      <!-- Reports -->
+      <div *ngSwitchCase="'reports'" class="reports-container">
+        <div class="card report-card">
+          <div class="report-icon"><span class="material-symbols-rounded">analytics</span></div>
+          <div class="report-info">
+            <h3>Platform Summary Report</h3>
+            <p>Comprehensive JSON export containing user stats, platform totals, and growth trends.</p>
+            <button class="outline-btn" (click)="exportReport()">
+              <span class="material-symbols-rounded">download</span> Download JSON
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

@@ -1,0 +1,66 @@
+<div class="pricing-container">
+  <div class="pricing-header">
+    <h1 class="premium-text">Choose Your Plan</h1>
+    <p class="subtitle">Unlock advanced analytics, custom reports, and smarter savings.</p>
+    
+    <div class="billing-toggle" (click)="toggleBilling()">
+      <span [class.active]="!isYearly">Monthly</span>
+      <div class="toggle-track">
+        <div class="toggle-thumb" [class.yearly]="isYearly"></div>
+      </div>
+      <span [class.active]="isYearly">Yearly <span class="discount-badge">Save 30%</span></span>
+    </div>
+  </div>
+
+  <div class="pricing-grid">
+    <!-- Free Plan -->
+    <div class="pricing-card" [class.active]="currentPlan === 'FREE'">
+      <div class="plan-header">
+        <h2>Free</h2>
+        <div class="price">₹0 <span>/ forever</span></div>
+      </div>
+      <ul class="features">
+        <li><span class="material-symbols-rounded">check_circle</span> Basic Expense Tracking</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Category Management</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Budgeting Tools</li>
+        <li class="disabled"><span class="material-symbols-rounded">lock</span> Advanced Analytics</li>
+        <li class="disabled"><span class="material-symbols-rounded">lock</span> Export Reports</li>
+      </ul>
+      <button class="plan-btn" disabled>Current Plan</button>
+    </div>
+
+    <!-- Trial / Pro Plan -->
+    <div class="pricing-card featured" [class.active]="currentPlan === 'TRIAL' || currentPlan === 'PRO'">
+      <div class="popular-badge">Most Popular</div>
+      <div class="plan-header">
+        <h2>Pro</h2>
+        <div class="price">₹{{ isYearly ? '1499' : '199' }} <span>/ {{ isYearly ? 'year' : 'month' }}</span></div>
+      </div>
+      <ul class="features">
+        <li><span class="material-symbols-rounded">check_circle</span> Everything in Free</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Advanced Analytics & Trends</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Custom PDF/Excel Reports</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Future Spending Forecasts</li>
+        <li><span class="material-symbols-rounded">check_circle</span> Priority Support</li>
+      </ul>
+      
+      <div class="btn-group">
+        <button *ngIf="!isTrialUsed && currentPlan === 'FREE'" class="trial-btn" (click)="startTrial()">
+          Start 7-Day Trial
+        </button>
+        <button class="plan-btn primary" (click)="upgrade()">
+          {{ currentPlan === 'PRO' ? 'Renew Now' : 'Upgrade to Pro' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pricing-footer">
+    <p>Secure payments powered by <strong>Razorpay</strong></p>
+    <div class="payment-icons">
+      <span class="material-symbols-rounded">credit_card</span>
+      <span class="material-symbols-rounded">account_balance_wallet</span>
+      <span class="material-symbols-rounded">qr_code_2</span>
+    </div>
+  </div>
+</div>

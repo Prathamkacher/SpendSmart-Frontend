@@ -1,0 +1,108 @@
+<div class="space-y-8 animate-in fade-in duration-700">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div>
+      <h1 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Financial Guardrails</h1>
+      <p class="text-slate-500 dark:text-gray-400 font-medium">Set limits and monitor your spending across categories.</p>
+    </div>
+    
+    <button 
+      routerLink="/budgets/add" 
+      class="bg-emerald-600 text-white font-black px-6 py-2.5 rounded-2xl shadow-lg dark:shadow-emerald-400/40 hover:bg-emerald-700 transition-all flex items-center w-fit"
+    >
+      <span class="material-symbols-rounded mr-2 text-xl">add_circle</span>
+      Set New Budget
+    </button>
+  </div>
+
+  @if (budgets().length > 0) {
+    <!-- Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
+      @for (budget of budgets(); track budget.budgetId) {
+        <div class="bg-white dark:bg-gray-900 transition-colors rounded-2xl md:rounded-[2.5rem] p-4 md:p-8 border border-slate-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
+          
+          <!-- Background accent -->
+          <div 
+            [style.backgroundColor]="getCategory(budget.categoryId)?.colorCode" 
+            class="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 opacity-5 blur-3xl -mr-12 -mt-12 md:-mr-16 md:-mt-16 group-hover:scale-150 transition-transform duration-700"
+          ></div>
+
+          <div class="flex items-center justify-between mb-4 md:mb-8 relative z-10">
+            <div class="flex items-center space-x-2 md:space-x-4">
+              <div 
+                [style.backgroundColor]="getCategory(budget.categoryId)?.colorCode + '15'" 
+                [style.color]="getCategory(budget.categoryId)?.colorCode" 
+                class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-inner"
+              >
+                {{ getCategory(budget.categoryId)?.icon || '💰' }}
+              </div>
+              <div class="overflow-hidden">
+                <h3 class="text-sm md:text-lg font-black text-slate-800 dark:text-white tracking-tight truncate">{{ budget.name }}</h3>
+                <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ budget.period }}</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button [routerLink]="['/budgets/edit', budget.budgetId]" class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-900 transition-colors text-slate-400 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center">
+                <span class="material-symbols-rounded text-base">edit</span>
+              </button>
+              <button (click)="deleteBudget(budget.budgetId!)" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center">
+                <span class="material-symbols-rounded text-base">delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-4 md:space-y-6 relative z-10">
+            <div class="grid grid-cols-2 gap-2 md:gap-4">
+              <div>
+                <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">Spent</p>
+                <p class="text-xs md:text-xl font-black text-slate-800 dark:text-white">{{ budget.spentAmount | currency:budget.currency }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">Limit</p>
+                <p class="text-xs md:text-xl font-black text-slate-800 dark:text-white">{{ budget.limitAmount | currency:budget.currency }}</p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                <span [class]="budget.progressPercentage! > 90 ? 'text-rose-500' : 'text-slate-400'">Progress</span>
+                <span [class]="budget.progressPercentage! > 90 ? 'text-rose-600' : 'text-emerald-600'">{{ budget.progressPercentage | number:'1.0-0' }}%</span>
+              </div>
+              <div class="h-2.5 w-full bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                <div 
+                  class="h-full transition-all duration-1000 ease-out rounded-full" 
+                  [class]="budget.progressPercentage! >= 100 ? 'bg-rose-500' : budget.progressPercentage! >= 80 ? 'bg-amber-500' : 'bg-emerald-500'"
+                  [style.width.%]="budget.progressPercentage! > 100 ? 100 : budget.progressPercentage"
+                ></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Remaining</span>
+                <span [class]="budget.remainingAmount! < 0 ? 'text-rose-500' : 'text-slate-800 dark:text-white'" class="text-sm font-black">
+                  {{ budget.remainingAmount | currency:budget.currency }}
+                </span>
+              </div>
+              <span [class]="getStatusClass(budget.status)" class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">
+                {{ budget.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="py-32 text-center bg-white dark:bg-gray-900 transition-colors rounded-[3rem] border border-dashed border-slate-200 dark:border-gray-800 shadow-sm">
+      <div class="w-24 h-24 bg-slate-50 dark:bg-slate-900 transition-colors rounded-full flex items-center justify-center mx-auto mb-8">
+        <span class="material-symbols-rounded text-slate-200 text-6xl">savings</span>
+      </div>
+      <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-3">No Active Budgets</h2>
+      <p class="text-slate-500 dark:text-gray-400 font-medium max-w-sm mx-auto mb-10 leading-relaxed">Setting budgets is the first step to financial freedom. Create your first spending limit to start tracking your progress.</p>
+      <button routerLink="/budgets/add" class="bg-emerald-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl dark:shadow-emerald-400/40 hover:bg-emerald-700 transition-all transform hover:-translate-y-1">
+        Setup First Budget
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,9 @@
+/* Analytics Dashboard Styles */
+:host {
+    display: block;
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+}

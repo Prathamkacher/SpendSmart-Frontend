@@ -1,0 +1,148 @@
+<div class="flex h-screen bg-slate-50 dark:bg-slate-900 font-['Inter'] overflow-hidden transition-colors duration-300">
+  <!-- Mobile Sidebar Overlay -->
+  <div *ngIf="isMobileMenuOpen" class="fixed inset-0 z-50 md:hidden">
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" (click)="closeMobileMenu()"></div>
+    <aside class="fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
+      <!-- Logo Area -->
+      <div class="h-20 flex items-center px-6 border-b border-slate-100 dark:border-gray-800 shrink-0">
+        <div class="bg-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+          <span class="text-white text-xl">💰</span>
+        </div>
+        <span class="ml-3 text-xl font-black tracking-tight whitespace-nowrap text-slate-900 dark:text-white">
+          Spend<span class="text-emerald-600 dark:text-emerald-400">Smart</span>
+        </span>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+        <a *ngFor="let item of navItems" [routerLink]="item.route"
+          (click)="closeMobileMenu()"
+          routerLinkActive="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+          class="flex items-center px-3 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-semibold text-sm transition-all">
+          <span class="material-symbols-rounded text-[22px] mr-3">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      </nav>
+
+      <!-- Mobile Footer -->
+      <div class="p-4 border-t border-slate-100 dark:border-gray-800">
+        <button (click)="logout()" class="w-full flex items-center justify-center px-3 py-3 rounded-xl text-rose-500 font-bold text-sm bg-rose-50 dark:bg-rose-500/10">
+          <span class="material-symbols-rounded mr-3">logout</span>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Sidebar (Desktop) -->
+  <aside [class.w-72]="isSidebarOpen" [class.w-20]="!isSidebarOpen"
+    class="hidden md:flex bg-white dark:bg-gray-900 border-r border-slate-200 dark:border-gray-800 flex-col transition-all duration-300 ease-in-out z-30 relative shadow-xl dark:shadow-slate-400/40/50 dark:shadow-gray-900/50">
+    <!-- Logo Area -->
+    <div class="h-20 flex items-center px-6 border-b border-slate-100 dark:border-gray-800 shrink-0 overflow-hidden">
+      <div
+        class="bg-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg dark:shadow-emerald-400/50 dark:shadow-emerald-900/50">
+        <span class="text-white text-xl">💰</span>
+      </div>
+      <span *ngIf="isSidebarOpen" class="ml-3 text-xl font-black tracking-tight whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400">
+        Spend<span class="text-emerald-600 dark:text-emerald-400">Smart</span>
+      </span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1 custom-scrollbar">
+      <a *ngFor="let item of navItems" [routerLink]="item.route"
+        routerLinkActive="bg-emerald-50 text-emerald-600 shadow-sm dark:bg-emerald-500/10 dark:text-emerald-400"
+        class="flex items-center px-3 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white transition-all duration-200 group relative">
+        <span class="material-symbols-rounded text-[22px]">{{ item.icon }}</span>
+        <span *ngIf="isSidebarOpen" class="ml-3 font-semibold text-sm whitespace-nowrap">{{ item.label }}</span>
+
+        <!-- Tooltip for collapsed sidebar -->
+        <div *ngIf="!isSidebarOpen"
+          class="absolute left-full ml-4 px-2 py-1 bg-slate-800 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+          {{ item.label }}
+        </div>
+      </a>
+    </nav>
+
+    <!-- User Profile & Footer -->
+    <div class="p-4 border-t border-slate-100 dark:border-gray-800 bg-slate-50/50 dark:bg-gray-800/30">
+      <div *ngIf="isSidebarOpen"
+        routerLink="/profile"
+        class="flex items-center p-2 rounded-xl bg-white dark:bg-gray-800 border border-slate-100 dark:border-gray-700 shadow-sm mb-4 transition-all hover:border-emerald-500/50 hover:dark:shadow-emerald-400/40 dark:hover:shadow-emerald-900/20 cursor-pointer group/user">
+        <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold overflow-hidden">
+          <img *ngIf="currentUser()?.avatarUrl" [src]="currentUser()?.avatarUrl" class="w-full h-full object-cover">
+          <span *ngIf="!currentUser()?.avatarUrl">{{ (currentUser()?.fullName || 'U').charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="ml-3 overflow-hidden">
+          <p class="text-xs font-bold text-slate-800 dark:text-white truncate group-hover/user:text-emerald-600 transition-colors">{{ currentUser()?.fullName || 'User' }}</p>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black">{{ currentUser()?.planType || 'Free' }} Plan</p>
+        </div>
+      </div>
+
+      <!-- Admin Panel Shortcut -->
+      <div *ngIf="isSidebarOpen && currentUser()?.role === 'ADMIN'" class="px-2 mb-2">
+        <a routerLink="/admin" class="flex items-center justify-center p-2 rounded-xl bg-slate-800 text-white shadow-sm hover:bg-slate-700 transition-all">
+          <span class="material-symbols-rounded mr-2 text-base">admin_panel_settings</span>
+          <span class="text-[10px] font-black uppercase tracking-wider">Admin Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Upgrade Link -->
+      <div *ngIf="isSidebarOpen && (currentUser()?.planType === 'FREE' || currentUser()?.planType === 'TRIAL')" class="px-2 mb-4">
+        <a routerLink="/pricing" class="flex items-center justify-center p-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:scale-[1.02] transition-all">
+          <span class="material-symbols-rounded mr-2 text-lg">star</span>
+          <span class="text-xs font-black uppercase tracking-wider">Upgrade to Pro</span>
+        </a>
+      </div>
+
+      <button (click)="logout()"
+        class="w-full flex items-center justify-center px-3 py-3 rounded-xl text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors group">
+        <span class="material-symbols-rounded">logout</span>
+        <span *ngIf="isSidebarOpen" class="ml-3 font-bold text-sm">Sign Out</span>
+      </button>
+    </div>
+
+    <!-- Collapse Toggle -->
+    <button (click)="toggleSidebar()"
+      class="absolute -right-3 top-24 w-6 h-6 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 shadow-sm z-50 transition-transform active:scale-95">
+      <span class="material-symbols-rounded text-sm" [class.rotate-180]="!isSidebarOpen">chevron_left</span>
+    </button>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-40">
+    <!-- Top Header (Contextual) -->
+    <header
+      class="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 flex items-center justify-between px-8 shrink-0 z-20 transition-colors duration-300">
+      <div class="flex items-center space-x-4">
+        <!-- Mobile Menu Toggle -->
+        <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+          <span class="material-symbols-rounded">menu</span>
+        </button>
+
+        <span class="font-black text-lg uppercase tracking-[0.2em] bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-emerald-600 dark:from-primary-400 dark:to-emerald-400 drop-shadow-sm">
+          {{ router.url.split('?')[0].split('#')[0].split('/')[1] || 'Dashboard' }}
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center bg-slate-100 dark:bg-gray-800 rounded-full px-4 py-2 border border-slate-200/50 dark:border-gray-700 transition-colors">
+          <span class="material-symbols-rounded text-slate-400 text-lg">search</span>
+          <input type="text" placeholder="Search transactions..."
+            (keyup.enter)="onSearch($event)"
+            class="bg-transparent border-none outline-none text-sm ml-2 w-48 text-slate-600 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+        </div>
+        
+        <!-- Theme Toggle Component -->
+        <app-theme-toggle></app-theme-toggle>
+
+        <app-notification-bell></app-notification-bell>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="flex-1 overflow-y-auto p-2 md:p-8 custom-scrollbar">
+      <router-outlet />
+    </div>
+  </main>
+</div>

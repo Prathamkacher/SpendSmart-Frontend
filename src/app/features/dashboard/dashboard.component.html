@@ -1,0 +1,361 @@
+<div class="space-y-4 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <!-- Top Welcome Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-6">
+    <div>
+      <h1 class="text-lg md:text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+        Hi, <span class="text-emerald-600">{{ (user()?.fullName?.split(' ') || [])[0] || 'User' }}!</span>
+      </h1>
+      <p class="text-[10px] md:text-base text-slate-500 dark:text-gray-400 font-medium">Daily summary.</p>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+      <button routerLink="/expenses" class="bg-white dark:bg-gray-900 transition-colors text-slate-700 dark:text-gray-200 font-bold px-3 md:px-5 py-1.5 md:py-2.5 rounded-xl md:rounded-2xl border border-slate-200 dark:border-gray-800 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-800 text-[10px] md:text-sm transition-all flex items-center">
+        <span class="material-symbols-rounded mr-1.5 text-lg md:text-xl">history</span>
+        <span>History</span>
+      </button>
+      <button routerLink="/analytics" class="bg-slate-900 text-white font-bold px-3 md:px-6 py-1.5 md:py-2.5 rounded-xl md:rounded-2xl shadow-lg dark:shadow-slate-400/40 hover:bg-slate-800 text-[10px] md:text-sm transition-all flex items-center">
+        <span class="material-symbols-rounded mr-1.5 text-lg md:text-xl">analytics</span>
+        <span>Insights</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Month & Year Selector Bar -->
+  <div class="flex items-center space-x-2 animate-in slide-in-from-left-4 duration-500 delay-150">
+    <div class="flex items-center bg-white dark:bg-gray-900 rounded-2xl md:rounded-3xl border border-slate-100 dark:border-gray-800 p-1 md:p-1.5 shadow-sm">
+      <div class="hidden md:flex items-center px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl mr-2">
+        <span class="material-symbols-rounded text-emerald-600 text-sm mr-2">calendar_month</span>
+        <span class="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Filter Period</span>
+      </div>
+      
+      <div class="flex items-center space-x-1 pr-1 md:pr-2">
+        <select 
+          [(ngModel)]="selectedMonth" 
+          (change)="onMonthYearChange()"
+          class="bg-transparent dark:bg-gray-800 border-none text-[10px] md:text-xs font-black text-slate-700 dark:text-gray-100 focus:ring-0 py-1 md:py-1.5 px-2 md:px-3 appearance-none cursor-pointer hover:text-emerald-600 transition-colors rounded-lg md:rounded-xl"
+        >
+          <option *ngFor="let m of months" [value]="m.value" class="dark:bg-gray-800">{{ m.name }}</option>
+        </select>
+        
+        <div class="w-[1px] h-3 md:h-4 bg-slate-200 dark:bg-gray-800"></div>
+        
+        <select 
+          [(ngModel)]="selectedYear" 
+          (change)="onMonthYearChange()"
+          class="bg-transparent dark:bg-gray-800 border-none text-[10px] md:text-xs font-black text-slate-700 dark:text-gray-100 focus:ring-0 py-1 md:py-1.5 px-2 md:px-3 appearance-none cursor-pointer hover:text-emerald-600 transition-colors rounded-lg md:rounded-xl"
+        >
+          <option *ngFor="let y of years" [value]="y" class="dark:bg-gray-800">{{ y }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Action Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+    
+    <!-- Summary Column -->
+    <div class="space-y-3 md:space-y-6">
+      <!-- Balance Card -->
+      <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 md:p-8 rounded-2xl md:rounded-[2rem] text-white shadow-xl dark:shadow-emerald-400/40 relative overflow-hidden group">
+        <div class="relative z-10">
+          <p class="text-[8px] md:text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-0.5 md:mb-2">Balance</p>
+          <h2 class="text-xl md:text-4xl font-black mb-3 md:mb-6">{{ (totalIncome() - totalSpent()) | currency:user()?.currency }}</h2>
+          
+          <div class="grid grid-cols-2 gap-2 md:gap-4">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg md:rounded-2xl p-1.5 md:p-3 border border-white/20">
+              <p class="text-[7px] md:text-[10px] font-bold uppercase opacity-70">Income</p>
+              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalIncome() | currency:user()?.currency }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md rounded-lg md:rounded-2xl p-1.5 md:p-3 border border-white/20">
+              <p class="text-[7px] md:text-[10px] font-bold uppercase opacity-70">Spent</p>
+              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalSpent() | currency:user()?.currency }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -right-8 -top-8 w-24 md:w-32 h-24 md:h-32 bg-white/10 rounded-full blur-2xl"></div>
+      </div>
+
+      <!-- Quick Actions Card -->
+      <div class="bg-white dark:bg-gray-900 transition-colors p-3 md:p-6 rounded-2xl md:rounded-[2rem] border border-slate-100 dark:border-gray-800 shadow-sm">
+        <h3 class="text-[8px] md:text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest mb-3 px-1">Quick Actions</h3>
+        <div class="grid grid-cols-2 gap-2 md:gap-3">
+          <button routerLink="/income/add" class="flex flex-col items-center justify-center p-2 md:p-4 rounded-xl md:rounded-2xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors group">
+            <span class="material-symbols-rounded text-lg md:text-2xl mb-1 group-hover:scale-110 transition-transform">add_card</span>
+            <span class="text-[8px] md:text-xs font-bold">Income</span>
+          </button>
+          <button routerLink="/categories" class="flex flex-col items-center justify-center p-2 md:p-4 rounded-xl md:rounded-2xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors group">
+            <span class="material-symbols-rounded text-lg md:text-2xl mb-1 group-hover:scale-110 transition-transform">category</span>
+            <span class="text-[8px] md:text-xs font-bold">Categories</span>
+          </button>
+          <button routerLink="/budgets" class="flex flex-col items-center justify-center p-2 md:p-4 rounded-xl md:rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors group">
+            <span class="material-symbols-rounded text-lg md:text-2xl mb-1 group-hover:scale-110 transition-transform">savings</span>
+            <span class="text-[8px] md:text-xs font-bold">Budgets</span>
+          </button>
+          <button routerLink="/analytics" class="flex flex-col items-center justify-center p-2 md:p-4 rounded-xl md:rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors group">
+            <span class="material-symbols-rounded text-lg md:text-2xl mb-1 group-hover:scale-110 transition-transform">monitoring</span>
+            <span class="text-[8px] md:text-xs font-bold">Reports</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Health Score Card Container -->
+      <div 
+        (mouseenter)="onHealthMouseEnter()"
+        class="h-[90px] md:h-[180px] relative group"
+      >
+        <div 
+          (mouseleave)="onHealthMouseLeave()"
+          [class]="'rounded-2xl md:rounded-[2rem] text-white transition-all duration-700 ease-in-out ' + 
+            (healthScore?.score >= 80 ? 'bg-emerald-600' : 'bg-slate-900') + 
+            (showHealthDetails() ? ' absolute top-0 left-0 w-[240px] md:w-[420px] p-3 md:p-8 z-[50] shadow-2xl scale-105 origin-top-left' : ' relative w-full h-full p-3 md:p-8 z-10 scale-100')"
+        >
+          <div class="flex items-center justify-between mb-1 md:mb-4">
+            <p class="text-[7px] md:text-[10px] font-black uppercase tracking-widest opacity-80">Health</p>
+            <span class="material-symbols-rounded text-sm md:text-base opacity-60">verified_user</span>
+          </div>
+          <div class="flex items-baseline space-x-1 md:space-x-2 mb-1 md:mb-4">
+            <h2 class="text-xl md:text-4xl font-black transition-all" [class.text-2xl]="showHealthDetails() && !isMobile()">{{ healthScore?.score || '--' }}</h2>
+            <span class="text-[10px] md:text-lg font-bold opacity-60">/ 100</span>
+          </div>
+          <p class="text-[8px] md:text-xs font-medium leading-tight md:leading-relaxed opacity-90 line-clamp-2 md:line-clamp-none">"{{ healthScore?.insight }}"</p>
+
+          <!-- Hover Details Overlay (Appears inside) -->
+          <div 
+            *ngIf="showHealthDetails()"
+            class="mt-6 pt-6 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-700"
+          >
+            <div class="flex justify-between items-center mb-5">
+              <h4 class="text-xs font-black uppercase tracking-widest text-emerald-400">Parameters</h4>
+              <span class="text-[9px] font-black bg-white/10 text-white px-2 py-0.5 rounded">PRO</span>
+            </div>
+
+            <div class="space-y-3 mb-6">
+              <div *ngFor="let p of getHealthParameters()" class="flex justify-between items-center">
+                <div class="flex-1">
+                  <p class="text-[10px] font-black uppercase tracking-wider text-white mb-0.5">{{ p.name }}</p>
+                  <p class="text-[9px] font-medium text-white/40">{{ p.desc }}</p>
+                </div>
+                <div class="ml-4 text-right">
+                  <span class="text-xs font-black text-white">{{ p.weight }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-5 border-t border-white/10">
+              <p class="text-[9px] font-black uppercase tracking-widest text-white/50 mb-3">Tips to improve the score</p>
+              <ul class="space-y-2">
+                <li *ngFor="let tip of getHealthTips()" class="flex items-center group/tip">
+                  <span class="material-symbols-rounded text-emerald-400 text-sm mr-3">check_circle</span>
+                  <span class="text-[10px] font-bold text-white/70">{{ tip }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats Card (Budgets & Categories) -->
+      <div class="bg-white dark:bg-gray-900 transition-colors dark:bg-gray-900 transition-colors p-6 rounded-[2rem] border border-slate-100 dark:border-gray-800 dark:border-gray-800 shadow-sm">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h3 class="text-sm font-black text-slate-800 dark:text-white dark:text-white uppercase tracking-widest">Active Budgets</h3>
+          <button routerLink="/budgets" class="text-[10px] font-bold text-emerald-600 hover:underline">View All</button>
+        </div>
+        <div class="space-y-3 mb-6">
+          @for (b of activeBudgets; track b.budgetId) {
+            <div class="p-3 bg-slate-50 dark:bg-slate-900 transition-colors dark:bg-slate-900 transition-colors rounded-xl flex justify-between items-center group hover:bg-emerald-50 transition-colors">
+              <span class="text-xs font-bold text-slate-700">{{ b.categoryName }}</span>
+              <span class="text-xs font-black text-emerald-600">{{ b.limitAmount | currency:user()?.currency }}</span>
+            </div>
+          } @empty {
+            <p class="text-xs text-slate-400 font-medium px-2 py-2">No active budgets.</p>
+          }
+        </div>
+
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h3 class="text-sm font-black text-slate-800 dark:text-white dark:text-white uppercase tracking-widest">My Categories</h3>
+          <button routerLink="/categories" class="text-[10px] font-bold text-emerald-600 hover:underline">Manage</button>
+        </div>
+        <div class="flex flex-wrap gap-2 px-2">
+          @for (c of topCategories; track c.categoryId) {
+            <span [style.color]="c.colorCode" [style.backgroundColor]="c.colorCode + '20'" class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-transform hover:scale-105 cursor-default">
+              {{ c.icon }} {{ c.name }}
+            </span>
+          } @empty {
+            <p class="text-xs text-slate-400 font-medium py-2">No custom categories.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Activity Column -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <!-- Trend Mini-Chart -->
+      <div class="bg-white dark:bg-gray-900 transition-colors dark:bg-gray-900 transition-colors p-8 rounded-[2rem] border border-slate-100 dark:border-gray-800 dark:border-gray-800 shadow-sm relative overflow-hidden">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h3 class="text-lg font-black text-slate-800 dark:text-white tracking-tight">Spending Flow</h3>
+            <p class="text-slate-400 text-xs font-medium">{{ months[selectedMonth-1].name }} {{ selectedYear }} activity</p>
+          </div>
+          <div class="flex space-x-3">
+            <div class="flex items-center space-x-1">
+              <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">In</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Out</span>
+            </div>
+          </div>
+        </div>
+        <div class="h-48">
+          <canvas baseChart
+                  [data]="barChartData"
+                  [options]="barChartOptions"
+                  [type]="'bar'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Add Expense Form -->
+      <div id="add-expense-form" class="bg-white dark:bg-gray-900 transition-colors dark:bg-gray-900 transition-colors p-8 rounded-[2rem] border border-slate-100 dark:border-gray-800 dark:border-gray-800 shadow-sm scroll-mt-24">
+        <h3 class="text-lg font-black text-slate-800 dark:text-white dark:text-white tracking-tight mb-6">Record New Expense</h3>
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+          <!-- Title -->
+          <div class="md:col-span-3 relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 text-xl">shopping_bag</span>
+            <input [(ngModel)]="newExpense.title" placeholder="What did you buy?" class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700">
+          </div>
+          <!-- Category Custom Dropdown -->
+          <div class="md:col-span-3 relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 text-xl z-10 pointer-events-none">category</span>
+            
+            <button 
+              type="button"
+              (click)="toggleCategoryDropdown()"
+              class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 text-left flex items-center justify-between transition-colors hover:bg-slate-100 dark:bg-gray-800"
+            >
+              <span class="truncate">
+                {{ newExpense.categoryId && newExpense.categoryId > 0 ? getCategoryIcon(newExpense.categoryId) + ' ' + getCategoryName(newExpense.categoryId) : 'Select Category' }}
+              </span>
+              <span class="material-symbols-rounded text-slate-400 text-lg absolute right-4 transition-transform" [class.rotate-180]="isCategoryDropdownOpen">expand_more</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            @if (isCategoryDropdownOpen) {
+              <div class="fixed inset-0 z-40" (click)="isCategoryDropdownOpen = false"></div>
+              <div class="absolute z-50 mt-2 min-w-[240px] w-full bg-white dark:bg-gray-900 transition-colors rounded-2xl shadow-xl border border-slate-100 dark:border-gray-800 overflow-hidden">
+                <div class="max-h-48 overflow-y-auto py-2">
+                  @for (cat of categories(); track cat.categoryId) {
+                    <button 
+                      *ngIf="cat.type === 'EXPENSE'"
+                      type="button"
+                      (click)="selectCategory(cat.categoryId!)"
+                      class="w-full px-4 py-2.5 text-left text-sm font-bold text-slate-700 hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors hover:text-emerald-600 flex items-center space-x-2"
+                      [class.bg-emerald-50]="newExpense.categoryId === cat.categoryId"
+                      [class.text-emerald-700]="newExpense.categoryId === cat.categoryId"
+                    >
+                      <span>{{ cat.icon }}</span>
+                      <span class="truncate">{{ cat.name }}</span>
+                    </button>
+                  }
+                </div>
+                <div class="border-t border-slate-100 dark:border-gray-800 p-2 bg-slate-50/50">
+                  <button type="button" (click)="selectCategory(-1)" class="w-full px-4 py-2 rounded-xl text-left text-sm font-black text-emerald-600 hover:bg-emerald-100 transition-colors flex items-center space-x-2">
+                    <span class="material-symbols-rounded text-lg">add</span>
+                    <span>New Category</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+          <!-- Amount -->
+          <div class="md:col-span-2 relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 text-xl">payments</span>
+            <input type="number" [(ngModel)]="newExpense.amount" placeholder="0" class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700">
+          </div>
+          <!-- Payment Method -->
+          <div class="md:col-span-2 relative">
+            <select [(ngModel)]="newExpense.paymentMethod" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none">
+              <option value="CASH">Cash</option>
+              <option value="CARD">Card</option>
+              <option value="UPI">UPI</option>
+              <option value="BANK">Bank</option>
+              <option value="WALLET">Wallet</option>
+            </select>
+          </div>
+          
+          <!-- Add Button -->
+          <div class="md:col-span-2">
+            <button (click)="addExpense()" [disabled]="loading()" class="w-full h-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 px-4 rounded-2xl transition-all shadow-lg dark:shadow-emerald-400/50 disabled:opacity-50">
+              {{ loading() ? 'Saving...' : 'Add' }}
+            </button>
+          </div>
+
+          <!-- Recurring Fields -->
+          <div class="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-gray-800">
+            <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
+              <input type="checkbox" [(ngModel)]="newExpense.isRecurring" id="isRecurringDash" class="w-5 h-5 text-emerald-600 rounded">
+              <label for="isRecurringDash" class="text-xs font-bold text-slate-600 dark:text-slate-400">Recurring bill?</label>
+            </div>
+            @if (newExpense.isRecurring) {
+              <div class="animate-in slide-in-from-left-2">
+                <select [(ngModel)]="newExpense.recurrencePeriod" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-xs font-bold text-slate-700 appearance-none">
+                  <option value="WEEKLY">Every Week</option>
+                  <option value="MONTHLY">Every Month</option>
+                  <option value="YEARLY">Every Year</option>
+                </select>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Expenses -->
+      <div class="bg-white dark:bg-gray-900 transition-colors rounded-[2rem] border border-slate-100 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="p-6 md:p-8 border-b border-slate-50 dark:border-gray-800 flex justify-between items-center bg-slate-50/30 dark:bg-gray-800/30">
+          <h3 class="text-lg font-black text-slate-800 dark:text-white tracking-tight">Recent Transactions</h3>
+          <button (click)="loadExpenses()" class="p-2 hover:bg-white dark:hover:bg-gray-800 transition-all rounded-xl border border-transparent hover:border-slate-100 dark:hover:border-gray-700 text-slate-400 hover:text-emerald-600">
+            <span class="material-symbols-rounded">refresh</span>
+          </button>
+        </div>
+        
+        <div class="divide-y divide-slate-50 dark:divide-gray-800">
+          @for (expense of expenses(); track expense.expenseId) {
+            <div class="p-4 md:p-6 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-all group">
+              <div class="flex items-center space-x-4">
+                <div [style.backgroundColor]="getCategoryColor(expense.categoryId) + '20'"
+                     [style.color]="getCategoryColor(expense.categoryId)"
+                     class="w-12 h-12 rounded-[1rem] flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  {{ getCategoryIcon(expense.categoryId) }}
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-slate-800 dark:text-white dark:text-white tracking-tight">{{ expense.title }}</h4>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ getCategoryName(expense.categoryId) }} · {{ (expense.createdAt || expense.date) | date:'MMM d, y, h:mm a' }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-black text-slate-900 dark:text-white dark:text-white">{{ expense.amount | currency:user()?.currency }}</p>
+                <button (click)="deleteExpense(expense.expenseId!)" class="text-[10px] font-bold text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
+              </div>
+            </div>
+          } @empty {
+            <div class="py-16 text-center">
+              <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 transition-colors dark:bg-slate-900 transition-colors rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-rounded text-slate-200 text-4xl">receipt_long</span>
+              </div>
+              <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">No transactions yet</p>
+            </div>
+          }
+        </div>
+        
+        <div class="p-6 bg-slate-50/50 text-center">
+          <button routerLink="/expenses" class="text-xs font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 transition-colors">
+            View All Transactions
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

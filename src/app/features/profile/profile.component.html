@@ -1,0 +1,137 @@
+<div class="profile-container animate-fade-in">
+    <div class="profile-header">
+        <h1 class="page-title">Profile</h1>
+        <p class="page-subtitle">Personalize your identity and preferences</p>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-stack">
+        <!-- Avatar Section (Top) -->
+        <div class="card avatar-card">
+            <div class="avatar-edit-wrapper">
+                <div class="avatar-main" (click)="triggerFileInput(fileInput)">
+                    <img *ngIf="previewUrl" [src]="previewUrl" alt="Profile">
+                    <div *ngIf="!previewUrl" class="initials-avatar">
+                        {{ (user()?.fullName || 'U').charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="avatar-overlay">
+                        <span class="material-symbols-rounded">photo_camera</span>
+                        <span>Edit</span>
+                    </div>
+                </div>
+                <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+                
+                <div class="user-id-badge">
+                    <span class="id-label">ID</span>
+                    <span class="id-value">#{{ user()?.userId || '0000' }}</span>
+                </div>
+            </div>
+
+            <div class="user-quick-info">
+                <h2 class="display-name">{{ user()?.fullName }}</h2>
+                <p class="display-email">{{ user()?.email }}</p>
+            </div>
+        </div>
+
+        <!-- Personal Info Section -->
+        <div class="card settings-card">
+            <h3 class="section-title">
+                <span class="material-symbols-rounded">person</span>
+                Personal Information
+            </h3>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" formControlName="fullName" placeholder="Name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper disabled">
+                        <input type="email" formControlName="email">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Bio</label>
+                    <div class="input-wrapper">
+                        <textarea formControlName="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Section -->
+        <div class="card settings-card">
+            <h3 class="section-title">
+                <span class="material-symbols-rounded">tune</span>
+                Preferences
+            </h3>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Currency</label>
+                    <div class="input-wrapper">
+                        <select formControlName="currency">
+                            <option value="INR">Indian Rupee (₹)</option>
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="EUR">Euro (€)</option>
+                            <option value="GBP">Pound (£)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Monthly Budget</label>
+                    <div class="input-wrapper">
+                        <input type="number" formControlName="monthlyBudget" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscription Section -->
+        <div class="card settings-card subscription-card">
+            <h3 class="section-title">
+                <span class="material-symbols-rounded">stars</span>
+                Subscription Plan
+            </h3>
+            
+            <div class="subscription-content">
+                <div class="plan-info">
+                    <div class="plan-badge" [class.pro]="user()?.planType === 'PRO'" [class.trial]="user()?.planType === 'TRIAL'">
+                        {{ user()?.planType || 'FREE' }}
+                    </div>
+                    <div class="plan-details">
+                        <p class="plan-name">{{ user()?.planType === 'PRO' ? 'Premium Professional' : (user()?.planType === 'TRIAL' ? 'Free Trial' : 'Basic Free') }}</p>
+                        <p class="plan-expiry" *ngIf="user()?.planExpiryDate">
+                            Expires on: {{ user()?.planExpiryDate | date:'mediumDate' }}
+                        </p>
+                        <p class="plan-expiry" *ngIf="!user()?.planExpiryDate">
+                            Enjoy basic features forever.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="plan-actions" *ngIf="user()?.planType !== 'PRO'">
+                    <button type="button" class="btn-upgrade" routerLink="/pricing">
+                        <span class="material-symbols-rounded">rocket_launch</span>
+                        Upgrade to Pro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" routerLink="/dashboard">Cancel</button>
+            <button type="submit" class="btn-save" [disabled]="profileForm.invalid || isUpdating">
+                <span class="material-symbols-rounded" *ngIf="!isUpdating">save</span>
+                <div class="loader" *ngIf="isUpdating"></div>
+                {{ isUpdating ? 'Saving...' : 'Save' }}
+            </button>
+        </div>
+    </form>
+</div>

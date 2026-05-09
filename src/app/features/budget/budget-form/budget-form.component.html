@@ -1,0 +1,156 @@
+<div class="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <!-- Header -->
+  <div class="flex items-center space-x-6">
+    <button routerLink="/budgets" class="w-12 h-12 rounded-2xl bg-white dark:bg-gray-900 transition-colors border border-slate-200 dark:border-gray-800 shadow-sm flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{{ isEdit() ? 'Adjust Spending Goal' : 'Create Financial Goal' }}</h1>
+      <p class="text-slate-500 dark:text-gray-400 text-sm font-medium">Define your limits to build better spending habits.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white dark:bg-gray-900 transition-colors rounded-[2.5rem] shadow-xl dark:shadow-slate-400/40/50 dark:shadow-gray-950/50 border border-slate-100 dark:border-gray-800 p-10">
+    <form (ngSubmit)="save()" class="space-y-10">
+      
+      <!-- Identity & Category -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Title</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">topic</span>
+            <input 
+              name="name" 
+              [(ngModel)]="budget.name" 
+              placeholder="e.g. Monthly Groceries" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 placeholder:text-slate-300"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Target Category</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">category</span>
+            <select 
+              name="categoryId" 
+              [(ngModel)]="budget.categoryId" 
+              class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none cursor-pointer"
+            >
+              <option *ngFor="let cat of categories()" [value]="cat.categoryId">{{ cat.icon }} {{ cat.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amount & Threshold -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Maximum Limit</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">₹</span>
+            <input 
+              name="limitAmount" 
+              [(ngModel)]="budget.limitAmount" 
+              type="number" 
+              placeholder="0.00" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-black text-slate-800 dark:text-white"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Alert at (%)</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">notifications_active</span>
+            <input 
+              name="alertThreshold" 
+              [(ngModel)]="budget.alertThreshold" 
+              type="number" 
+              placeholder="80" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Period Selection -->
+      <div class="space-y-4">
+        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Cycle</label>
+        <div class="grid grid-cols-3 gap-3 p-1.5 bg-slate-50 dark:bg-slate-900 transition-colors rounded-3xl">
+          <button 
+            type="button" 
+            (click)="budget.period = 'WEEKLY'" 
+            [class]="budget.period === 'WEEKLY' ? 'bg-white dark:bg-gray-900 transition-colors text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-gray-400 hover:bg-white/50'"
+            class="py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+          >
+            Weekly
+          </button>
+          <button 
+            type="button" 
+            (click)="budget.period = 'MONTHLY'" 
+            [class]="budget.period === 'MONTHLY' ? 'bg-white dark:bg-gray-900 transition-colors text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-gray-400 hover:bg-white/50'"
+            class="py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+          >
+            Monthly
+          </button>
+          <button 
+            type="button" 
+            (click)="budget.period = 'CUSTOM'" 
+            [class]="budget.period === 'CUSTOM' ? 'bg-white dark:bg-gray-900 transition-colors text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-gray-400 hover:bg-white/50'"
+            class="py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+          >
+            Custom
+          </button>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Starts On</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">calendar_today</span>
+            <input 
+              name="startDate" 
+              [(ngModel)]="budget.startDate" 
+              type="date" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Ends On</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">event_busy</span>
+            <input 
+              name="endDate" 
+              [(ngModel)]="budget.endDate" 
+              type="date" 
+              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="pt-6">
+        <button 
+          type="submit" 
+          [disabled]="loading() || budget.limitAmount <= 0 || !budget.name" 
+          class="w-full py-5 bg-indigo-600 text-white rounded-3xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl dark:shadow-indigo-400/40 disabled:opacity-50 disabled:shadow-none flex items-center justify-center group"
+        >
+          @if (loading()) {
+            <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          } @else {
+            <span class="material-symbols-rounded mr-2 group-hover:rotate-12 transition-transform">verified</span>
+            <span>{{ isEdit() ? 'Update Financial Goal' : 'Establish Budget' }}</span>
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
