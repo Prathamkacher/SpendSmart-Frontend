@@ -1,74 +1,136 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { RecurringService } from './recurring.service';
-import { createApiResponse } from '../../../testing/test-helpers';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { RecurringService, RecurringTransaction } from './recurring.service';
+import { environment } from '../../../environments/environment';
 
 describe('RecurringService', () => {
   let service: RecurringService;
   let httpMock: HttpTestingController;
 
+  const mockTransaction: RecurringTransaction = {
+    recurringId: 1,
+    userId: 2,
+    categoryId: 3,
+    title: 'Netflix',
+    amount: 15.99,
+    type: 'EXPENSE',
+    frequency: 'MONTHLY',
+    startDate: '2023-01-01',
+    nextDueDate: '2023-02-01',
+    isActive: true,
+    paymentMethod: 'CARD'
+  };
+
+  const mockResponse = {
+    success: true,
+    message: 'Success',
+    data: mockTransaction,
+    timestamp: '2023-01-01T00:00:00'
+  };
+
+  const mockListResponse = {
+    ...mockResponse,
+    data: [mockTransaction]
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule],
+      providers: [RecurringService]
     });
-
     service = TestBed.inject(RecurringService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => httpMock.verify());
-
-  it('covers recurring retrieval endpoints', () => {
-    expect().nothing();
-
-    service.getUserRecurring().subscribe();
-    httpMock.expectOne('http://localhost:8080/recurring/user').flush(createApiResponse([]));
-
-    service.getActiveRecurring().subscribe();
-    httpMock.expectOne('http://localhost:8080/recurring/active').flush(createApiResponse([]));
-
-    service.getRecurringById(12).subscribe();
-    httpMock.expectOne('http://localhost:8080/recurring/12').flush(createApiResponse({} as any));
+  afterEach(() => {
+    httpMock.verify();
   });
 
-  it('covers recurring mutation endpoints', () => {
-    const payload = {
-      userId: 7,
-      categoryId: 3,
-      title: 'Rent',
-      amount: 18000,
-      type: 'EXPENSE' as const,
-      frequency: 'MONTHLY' as const,
-      startDate: '2026-05-01',
-      nextDueDate: '2026-06-01',
-      isActive: true
-    };
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    service.addRecurring(payload).subscribe();
-    const createReq = httpMock.expectOne('http://localhost:8080/recurring');
-    expect(createReq.request.method).toBe('POST');
-    createReq.flush(createApiResponse(payload));
+  it('should add recurring transaction', () => {
+    service.addRecurring(mockTransaction).subscribe(res => {
+      expect(res.data.title).toBe('Netflix');
+    });
 
-    service.updateRecurring(12, payload).subscribe();
-    const updateReq = httpMock.expectOne('http://localhost:8080/recurring/12');
-    expect(updateReq.request.method).toBe('PUT');
-    updateReq.flush(createApiResponse(payload));
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(mockTransaction);
+    req.flush(mockResponse);
+  });
 
-    service.activateRecurring(12).subscribe();
-    const activateReq = httpMock.expectOne('http://localhost:8080/recurring/activate/12');
-    expect(activateReq.request.method).toBe('PUT');
-    expect(activateReq.request.body).toEqual({});
-    activateReq.flush(createApiResponse({ ...payload, isActive: true }));
+  it('should get user recurring transactions', () => {
+    service.getUserRecurring().subscribe(res => {
+      expect(res.data.length).toBe(1);
+    });
 
-    service.deactivateRecurring(12).subscribe();
-    const deactivateReq = httpMock.expectOne('http://localhost:8080/recurring/deactivate/12');
-    expect(deactivateReq.request.method).toBe('PUT');
-    expect(deactivateReq.request.body).toEqual({});
-    deactivateReq.flush(createApiResponse({ ...payload, isActive: false }));
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/user`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockListResponse);
+  });
 
-    service.deleteRecurring(12).subscribe();
-    const deleteReq = httpMock.expectOne('http://localhost:8080/recurring/12');
-    expect(deleteReq.request.method).toBe('DELETE');
-    deleteReq.flush(createApiResponse(void 0));
+  it('should get active recurring transactions', () => {
+    service.getActiveRecurring().subscribe(res => {
+      expect(res.data.length).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/active`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockListResponse);
+  });
+
+  it('should get recurring by id', () => {
+    service.getRecurringById(1).subscribe(res => {
+      expect(res.data.recurringId).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/1`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should update recurring transaction', () => {
+    service.updateRecurring(1, mockTransaction).subscribe(res => {
+      expect(res.data.title).toBe('Netflix');
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(mockTransaction);
+    req.flush(mockResponse);
+  });
+
+  it('should deactivate recurring transaction', () => {
+    service.deactivateRecurring(1).subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/deactivate/1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual({});
+    req.flush(mockResponse);
+  });
+
+  it('should activate recurring transaction', () => {
+    service.activateRecurring(1).subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/activate/1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual({});
+    req.flush(mockResponse);
+  });
+
+  it('should delete recurring transaction', () => {
+    service.deleteRecurring(1).subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/recurring/1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush({ ...mockResponse, data: null });
   });
 });

@@ -1,0 +1,470 @@
+<!-- Navbar -->
+<nav [class.navbar-scrolled]="isScrolled()" class="fixed w-full z-50 transition-all duration-300 px-6 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 cursor-pointer" (click)="scrollToSection('hero')" (keydown.enter)="scrollToSection('hero')" (keydown.space)="scrollToSection('hero'); $event.preventDefault()" tabindex="0" role="button" aria-label="Scroll to hero section">
+      <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/20">
+        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+        </svg>
+      </div>
+      <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">SpendSmart</span>
+    </div>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-8">
+      <a (click)="scrollToSection('features')" class="nav-link">Features</a>
+      <a (click)="scrollToSection('analytics')" class="nav-link">Analytics</a>
+      <a (click)="scrollToSection('pricing')" class="nav-link">Pricing</a>
+      <a (click)="scrollToSection('faq')" class="nav-link">FAQ</a>
+    </div>
+
+    <div class="hidden md:flex items-center gap-4">
+      <app-theme-toggle></app-theme-toggle>
+      <a routerLink="/auth/login" class="px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary-600 transition-colors">Login</a>
+      <a routerLink="/auth/register" class="px-6 py-2.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-full transition-all shadow-lg shadow-primary-600/30">Get Started</a>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button (click)="toggleMenu()" class="md:hidden p-2 text-slate-600 dark:text-slate-300">
+      <span class="material-symbols-rounded" *ngIf="!isMenuOpen()">menu</span>
+      <span class="material-symbols-rounded" *ngIf="isMenuOpen()">close</span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="isMenuOpen()" class="md:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 p-6 space-y-6 shadow-2xl animate-fade-in">
+    <div class="flex flex-col gap-4">
+      <a (click)="scrollToSection('features')" class="mobile-nav-link">Features</a>
+      <a (click)="scrollToSection('analytics')" class="mobile-nav-link">Analytics</a>
+      <a (click)="scrollToSection('pricing')" class="mobile-nav-link">Pricing</a>
+      <a (click)="scrollToSection('faq')" class="mobile-nav-link">FAQ</a>
+    </div>
+    <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-4">
+      <a routerLink="/auth/login" class="mobile-nav-link">Login</a>
+      <a routerLink="/auth/register" class="w-full py-4 text-center font-bold text-white bg-primary-600 rounded-2xl">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<main class="overflow-x-hidden bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+  
+  <!-- Hero Section -->
+  <section id="hero" class="relative min-h-screen flex items-center pt-24 pb-20 lg:py-0 px-6 overflow-hidden">
+    <!-- Background Glows -->
+    <div class="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-primary-500/10 dark:bg-indigo-600/10 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 left-0 -z-10 w-[500px] h-[500px] bg-emerald-500/10 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
+
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <div [@fadeUp]>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-100 dark:border-primary-800 text-primary-700 dark:text-primary-400 text-sm font-bold mb-6">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+          </span>
+          Next-Gen Financial Tracking
+        </div>
+        <h1 class="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] mb-8">
+          Master Your <span class="gradient-text">Finances</span> Smarter Than Ever.
+        </h1>
+        <p class="text-lg lg:text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-lg leading-relaxed">
+          The ultimate fintech platform to track, visualize, and automate your personal economy. Get AI-driven insights and take full control of your wealth.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a routerLink="/auth/register" class="px-10 py-5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary-600/40 text-center">Start Free Trial</a>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="relative" [@fadeUp]>
+        <div class="relative z-10 glass-card p-4 rounded-[2.5rem] shadow-2xl animate-float">
+          <div class="bg-slate-50 dark:bg-slate-950 rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
+             <!-- Realistic Dashboard Preview -->
+             <div class="p-6 space-y-6">
+                <div class="flex justify-between items-center">
+                   <div class="space-y-1">
+                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Balance</p>
+                      <h4 class="text-2xl font-black text-slate-900 dark:text-white">$12,450.00</h4>
+                   </div>
+                   <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center border border-primary-200 dark:border-primary-800">
+                      <span class="material-symbols-rounded text-primary-600 dark:text-primary-400 text-xl">person</span>
+                   </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                   <div class="h-24 bg-primary-500/10 dark:bg-indigo-500/10 border border-primary-100 dark:border-primary-900/50 rounded-2xl flex flex-col justify-center p-4">
+                      <span class="text-[9px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider mb-1">Monthly Income</span>
+                      <span class="text-lg font-black text-primary-700 dark:text-primary-300">$4,200.00</span>
+                      <span class="text-[8px] text-emerald-500 font-bold mt-1">↑ 12% from last month</span>
+                   </div>
+                   <div class="h-24 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col justify-center p-4">
+                      <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Monthly Spent</span>
+                      <span class="text-lg font-black text-slate-900 dark:text-white">$2,150.00</span>
+                      <span class="text-[8px] text-rose-500 font-bold mt-1">↓ 5% from last month</span>
+                   </div>
+                </div>
+                <div class="space-y-3">
+                   <div class="flex justify-between items-center">
+                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Recent Activity</p>
+                      <span class="text-[9px] text-primary-600 font-bold">View All</span>
+                   </div>
+                   <div class="space-y-2">
+                      <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                         <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center text-xs">🍔</div>
+                            <span class="text-[10px] font-bold dark:text-white">Starbucks Coffee</span>
+                         </div>
+                         <span class="text-[10px] font-black text-rose-500">-$5.50</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                         <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs">🏢</div>
+                            <span class="text-[10px] font-bold dark:text-white">Monthly Rent</span>
+                         </div>
+                         <span class="text-[10px] font-black text-rose-500">-$1,200.00</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+        <!-- Floating Elements -->
+        <div class="absolute -top-6 -right-6 w-32 h-32 glass-card rounded-3xl p-4 flex flex-col justify-center items-center shadow-xl animate-float-delayed">
+           <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center mb-2">
+              <span class="material-symbols-rounded text-emerald-500">check</span>
+           </div>
+           <span class="text-xs font-bold dark:text-white">Savings Up</span>
+        </div>
+        <div class="absolute -bottom-6 -left-6 px-6 py-4 glass-card rounded-2xl flex items-center gap-4 shadow-xl animate-float">
+           <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
+              <span class="text-white text-xs font-bold font-sans">!</span>
+           </div>
+           <span class="text-sm font-bold dark:text-white">Budget limit reached</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-24 px-6 bg-slate-50/50 dark:bg-slate-900/30 transition-colors">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-20" [@fadeUp]>
+        <h2 class="text-primary-600 font-bold tracking-widest uppercase text-sm mb-4">Powerful Features</h2>
+        <p class="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-6">Everything you need to <br> manage wealth.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" [@staggerList]>
+        <div *ngFor="let f of features" class="stagger-item group p-8 rounded-3xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2">
+          <div class="w-14 h-14 bg-primary-50 dark:bg-primary-900/50 text-primary-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="f.icon"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">{{f.title}}</h3>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">{{f.desc}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-24 px-6 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+       <div class="grid lg:grid-cols-2 gap-20 items-center">
+          <div class="relative" [@fadeUp]>
+             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-primary-500/5 blur-[100px] rounded-full"></div>
+             <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000" alt="Dashboard" class="relative z-10 rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800">
+          </div>
+          <div [@fadeUp]>
+             <h2 class="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-12">How SpendSmart <br> Transforms Your Savings.</h2>
+             <div class="space-y-10">
+                <div *ngFor="let step of howItWorks" class="flex gap-6">
+                   <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-primary-200 dark:border-primary-800 flex items-center justify-center text-primary-600 font-black text-lg">
+                      {{step.step}}
+                   </div>
+                   <div class="space-y-2">
+                      <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{step.title}}</h3>
+                      <p class="text-slate-600 dark:text-slate-400">{{step.desc}}</p>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+  </section>
+
+  <!-- Analytics Showcase -->
+  <section id="analytics" class="py-24 px-6 bg-slate-900 text-white relative overflow-hidden">
+     <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#16a34a15,transparent)]"></div>
+     <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-20" [@fadeUp]>
+           <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">Elite Analytics for <br> Smart Investors.</h2>
+           <p class="text-slate-400 text-lg max-w-2xl mx-auto">Get the same level of insights as professional fund managers. Our analytics dashboard is designed for clarity and action.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 glass-card-dark p-8 rounded-[2rem] border border-white/5 h-[400px] flex flex-col" [@fadeUp]>
+              <div class="flex justify-between items-center mb-8">
+                 <div class="space-y-1">
+                    <h3 class="font-bold text-xl">Savings Growth</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest font-sans">Projected vs Actual (2026)</p>
+                 </div>
+                 <div class="flex gap-4">
+                    <div class="flex items-center gap-2">
+                       <div class="w-3 h-3 bg-primary-500 rounded-full"></div>
+                       <span class="text-[10px] text-slate-400 font-bold font-sans">Actual</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                       <div class="w-3 h-3 bg-slate-600 rounded-full"></div>
+                       <span class="text-[10px] text-slate-400 font-bold font-sans">Goal</span>
+                    </div>
+                 </div>
+              </div>
+              <div class="flex-1 flex items-end gap-3 lg:gap-6 pb-4">
+                 <div *ngFor="let m of ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug']" class="flex-1 flex flex-col items-center gap-3">
+                    <div class="w-full flex items-end justify-center gap-1 h-48">
+                       <div class="w-2 lg:w-4 bg-primary-500 rounded-t-md transition-all duration-1000" [style.height.%]="[40, 55, 45, 70, 65, 85, 75, 95][['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'].indexOf(m)]"></div>
+                       <div class="w-2 lg:w-4 bg-slate-700/50 rounded-t-md" [style.height.%]="[50, 50, 50, 60, 60, 70, 70, 80][['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'].indexOf(m)]"></div>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-500 font-sans">{{m}}</span>
+                 </div>
+              </div>
+           </div>
+           <div class="glass-card-dark p-8 rounded-[2rem] border border-white/5 space-y-8" [@fadeUp]>
+              <h3 class="font-bold text-xl">Spending Breakdown</h3>
+              <div class="relative w-48 h-48 mx-auto">
+                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-800" stroke-width="3"></circle>
+                    <circle cx="18" cy="18" r="16" fill="none" class="stroke-primary-500" stroke-width="3" stroke-dasharray="70, 100"></circle>
+                    <circle cx="18" cy="18" r="16" fill="none" class="stroke-emerald-400" stroke-width="3" stroke-dasharray="30, 100" stroke-dashoffset="-70"></circle>
+                 </svg>
+                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                    <span class="block text-2xl font-black">70%</span>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest text-sm font-sans">Needs</span>
+                 </div>
+              </div>
+              <div class="space-y-4">
+                 <div class="flex justify-between items-center text-sm font-sans">
+                    <span class="text-slate-400">Housing</span>
+                    <span class="font-bold">45%</span>
+                 </div>
+                 <div class="flex justify-between items-center text-sm font-sans">
+                    <span class="text-slate-400">Food</span>
+                    <span class="font-bold">25%</span>
+                 </div>
+                 <div class="flex justify-between items-center text-sm font-sans">
+                    <span class="text-slate-400">Others</span>
+                    <span class="font-bold">30%</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-20" [@fadeUp]>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-6">Simple, Honest Pricing.</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-lg">Choose the plan that fits your financial journey.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div *ngFor="let plan of plans" [class.pricing-highlight]="plan.highlight" class="relative group p-10 rounded-[2.5rem] bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 transition-all duration-500 hover:shadow-2xl flex flex-col h-full" [@fadeUp]>
+          <div *ngIf="plan.highlight" class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary-600 text-white text-xs font-black rounded-full tracking-widest uppercase flex items-center gap-2">
+            <span>Recommended</span>
+            <span *ngIf="plan.discount" class="bg-white text-primary-600 px-2 py-0.5 rounded-full text-[10px]">{{plan.discount}}</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{plan.name}}</h3>
+          <div class="flex items-baseline gap-1 mb-8">
+            <span class="text-4xl font-black text-slate-900 dark:text-white">₹{{plan.price}}</span>
+            <span class="text-slate-500">/{{plan.name === 'Pro Yearly' ? 'year' : 'mo'}}</span>
+          </div>
+          <ul class="space-y-5 mb-10 flex-1">
+            <li *ngFor="let feature of plan.features" class="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
+              <span class="material-symbols-rounded text-primary-500 text-lg">check_circle</span>
+              {{feature}}
+            </li>
+          </ul>
+          <a routerLink="/auth/register" [class.bg-primary-600]="plan.highlight" [class.text-white]="plan.highlight" [class.bg-slate-100]="!plan.highlight" [class.dark:bg-slate-700]="!plan.highlight" [class.text-slate-900]="!plan.highlight" [class.dark:text-white]="!plan.highlight" class="w-full py-4 rounded-2xl font-bold text-center transition-all group-hover:scale-105 active:scale-95 shadow-sm">{{plan.cta}}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Section -->
+  <section class="py-24 px-6 bg-slate-900 overflow-hidden relative">
+     <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary-600/10 blur-[100px] rounded-full translate-x-1/3 translate-y-1/3"></div>
+     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+        <div class="lg:w-1/2" [@fadeUp]>
+           <div class="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-primary-600/40">
+              <span class="material-symbols-rounded text-white text-3xl">verified_user</span>
+           </div>
+           <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Bank-Grade Security. <br> Period.</h2>
+           <p class="text-slate-400 text-lg mb-10">We prioritize your privacy above all else. Your data is encrypted, your connections are secure, and we never sell your information.</p>
+           <div class="grid grid-cols-2 gap-6">
+              <div class="flex items-center gap-3 text-white font-bold">
+                 <div class="w-2 h-2 bg-primary-500 rounded-full"></div> JWT Authentication
+              </div>
+              <div class="flex items-center gap-3 text-white font-bold">
+                 <div class="w-2 h-2 bg-primary-500 rounded-full"></div> End-to-End Encryption
+              </div>
+              <div class="flex items-center gap-3 text-white font-bold">
+                 <div class="w-2 h-2 bg-primary-500 rounded-full"></div> Microservices Arch
+              </div>
+              <div class="flex items-center gap-3 text-white font-bold">
+                 <div class="w-2 h-2 bg-primary-500 rounded-full"></div> 24/7 Monitoring
+              </div>
+           </div>
+        </div>
+        <div class="lg:w-1/2 relative" [@fadeUp]>
+           <div class="glass-card-dark p-12 rounded-[3rem] border border-white/10 relative z-10 text-center">
+              <div class="text-primary-500 text-6xl font-black mb-4">99.9%</div>
+              <div class="text-slate-400 uppercase tracking-widest text-sm mb-12">Uptime Guaranteed</div>
+              <div class="flex justify-center -space-x-4">
+                 <div *ngFor="let i of [1,2,3,4,5]" class="w-12 h-12 rounded-full border-4 border-slate-900 bg-slate-800 flex items-center justify-center text-xs font-bold">U{{i}}</div>
+                 <div class="w-12 h-12 rounded-full border-4 border-slate-900 bg-primary-600 flex items-center justify-center text-xs font-bold font-sans">+10k</div>
+              </div>
+              <p class="mt-6 text-slate-500 text-sm italic">Trusted by thousands of users worldwide.</p>
+           </div>
+        </div>
+     </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-24 px-6 bg-slate-50/50 dark:bg-slate-900/30 transition-colors">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-16" [@fadeUp]>
+        <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-4">
+        <div *ngFor="let faq of faqs; let i = index" class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm transition-all">
+          <button (click)="toggleFaq(i)" class="w-full p-6 text-left flex justify-between items-center gap-4">
+            <span class="font-bold text-slate-800 dark:text-slate-200">{{faq.q}}</span>
+            <span class="material-symbols-rounded text-slate-400 transition-transform duration-300" [class.rotate-180]="activeFaq() === i">expand_more</span>
+          </button>
+          <div *ngIf="activeFaq() === i" class="px-6 pb-6 text-slate-600 dark:text-slate-400 animate-fade-in">
+            {{faq.a}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-24 px-6">
+     <div class="max-w-7xl mx-auto">
+        <div class="relative bg-primary-600 rounded-[3rem] p-12 lg:p-24 overflow-hidden shadow-2xl shadow-primary-600/40" [@fadeUp]>
+           <div class="absolute top-0 right-0 w-[50%] h-[100%] bg-[radial-gradient(circle_at_70%_30%,#ffffff20,transparent)]"></div>
+           <div class="relative z-10 max-w-2xl">
+              <h2 class="text-4xl lg:text-6xl font-black text-white mb-8">Ready to grow your savings?</h2>
+              <p class="text-primary-100 text-xl mb-10">Join thousands of users who have already taken control of their financial future with SpendSmart.</p>
+              <div class="flex flex-col sm:flex-row gap-4">
+                 <a routerLink="/auth/register" class="px-10 py-5 bg-white text-primary-600 font-bold rounded-2xl shadow-xl hover:bg-slate-50 transition-all text-center">Get Started Now</a>
+                 <a routerLink="/auth/login" class="px-10 py-5 bg-primary-700 text-white font-bold rounded-2xl hover:bg-primary-800 transition-all text-center border border-white/10">Already have an account?</a>
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-20 px-6 border-t border-slate-100 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      <div class="space-y-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+          </div>
+          <span class="text-xl font-bold dark:text-white">SpendSmart</span>
+        </div>
+        <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">The smarter way to manage your personal finances. Track, budget, and save with ease.</p>
+        <div class="flex gap-4">
+           <a href="https://www.linkedin.com/in/pratham-kacher/" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-primary-600 hover:text-white transition-all font-bold">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+           </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-6 dark:text-white">Product</h4>
+        <ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400 font-sans">
+          <li><a (click)="scrollToSection('features')" class="hover:text-primary-600 cursor-pointer">Features</a></li>
+          <li><a (click)="scrollToSection('analytics')" class="hover:text-primary-600 cursor-pointer">Analytics</a></li>
+          <li><a (click)="scrollToSection('pricing')" class="hover:text-primary-600 cursor-pointer">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-6 dark:text-white">Resources</h4>
+        <ul class="space-y-4 text-sm text-slate-400 font-sans pointer-events-none">
+          <li>Documentation</li>
+          <li>Help Center</li>
+          <li>Security</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-6 dark:text-white">Contact</h4>
+        <ul class="space-y-4 text-sm text-slate-500 dark:text-slate-400 font-sans">
+          <li>prathamkacher.connect&#64;gmail.com</li>
+          <li>Gautam nagar Bhopal</li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400 font-sans">
+      <p>&copy; 2026 SpendSmart Inc. All rights reserved.</p>
+      <div class="flex gap-8">
+        <a (click)="openModal('privacy')" class="hover:text-primary-600 cursor-pointer transition-colors">Privacy Policy</a>
+        <a (click)="openModal('terms')" class="hover:text-primary-600 cursor-pointer transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div *ngIf="activeModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-fade-in" (click)="closeModal()" (keydown.enter)="closeModal()" (keydown.space)="closeModal(); $event.preventDefault()" tabindex="0" role="button" aria-label="Close modal overlay">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden" (click)="$event.stopPropagation()" [@fadeUp]>
+      <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+        <h3 class="text-2xl font-black dark:text-white">{{ activeModal() === 'privacy' ? 'Privacy Policy' : 'Terms of Service' }}</h3>
+        <button (click)="closeModal()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+          <span class="material-symbols-rounded dark:text-white">close</span>
+        </button>
+      </div>
+      <div class="p-8 max-h-[60vh] overflow-y-auto text-slate-600 dark:text-slate-400 leading-relaxed space-y-6 custom-scrollbar">
+        <ng-container *ngIf="activeModal() === 'privacy'">
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">1. Information We Collect</h4>
+            <p>At SpendSmart, we collect minimal data required to provide our financial tracking services. This includes your name, email, and transaction data you choose to input or sync.</p>
+          </section>
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">2. How We Use Data</h4>
+            <p>Your data is used solely to generate financial insights, manage budgets, and provide automation features. We never sell your data to third parties.</p>
+          </section>
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">3. Security</h4>
+            <p>We use bank-grade encryption (AES-256) and secure JWT authentication to ensure your sensitive information remains private and secure.</p>
+          </section>
+        </ng-container>
+        <ng-container *ngIf="activeModal() === 'terms'">
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">1. Acceptance of Terms</h4>
+            <p>By using SpendSmart, you agree to these terms. Our service is designed for personal financial management and should not be considered professional financial advice.</p>
+          </section>
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">2. User Responsibility</h4>
+            <p>You are responsible for maintaining the confidentiality of your account and for all activities that occur under your login credentials.</p>
+          </section>
+          <section class="space-y-4">
+            <h4 class="font-bold text-slate-900 dark:text-white text-lg">3. Service Limitations</h4>
+            <p>While we strive for 99.9% uptime, we are not liable for any financial decisions made based on temporary service unavailability or data input errors.</p>
+          </section>
+        </ng-container>
+      </div>
+      <div class="p-8 bg-slate-50 dark:bg-slate-950 text-center">
+        <button (click)="closeModal()" class="px-8 py-3 bg-primary-600 text-white font-bold rounded-xl shadow-lg hover:bg-primary-700 transition-all">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+</main>

@@ -55,14 +55,6 @@
             "scripts": [],
             "codeCoverage": true,
             "codeCoverageExclude": [
-              "src/app/features/auth/forgot-password/**",
-              "src/app/features/auth/oauth-success.component.ts",
-              "src/app/features/category/**",
-              "src/app/features/profile/**",
-              "src/app/features/recurring/**",
-              "src/app/core/services/category.service.ts",
-              "src/app/core/services/profile.service.ts",
-              "src/app/core/services/recurring.service.ts",
               "src/environments/**"
             ],
             "watch": false

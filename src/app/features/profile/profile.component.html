@@ -8,7 +8,7 @@
         <!-- Avatar Section (Top) -->
         <div class="card avatar-card">
             <div class="avatar-edit-wrapper">
-                <div class="avatar-main" (click)="triggerFileInput(fileInput)">
+                <div class="avatar-main" (click)="triggerFileInput(fileInput)" (keydown.enter)="triggerFileInput(fileInput)" (keydown.space)="triggerFileInput(fileInput); $event.preventDefault()" tabindex="0" role="button" aria-label="Edit profile photo">
                     <img *ngIf="previewUrl" [src]="previewUrl" alt="Profile">
                     <div *ngIf="!previewUrl" class="initials-avatar">
                         {{ (user()?.fullName || 'U').charAt(0).toUpperCase() }}
@@ -41,23 +41,23 @@
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Full Name</label>
+                    <label for="profile-full-name">Full Name</label>
                     <div class="input-wrapper">
-                        <input type="text" formControlName="fullName" placeholder="Name">
+                        <input id="profile-full-name" type="text" formControlName="fullName" placeholder="Name">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label for="profile-email">Email Address</label>
                     <div class="input-wrapper disabled">
-                        <input type="email" formControlName="email">
+                        <input id="profile-email" type="email" formControlName="email">
                     </div>
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Bio</label>
+                    <label for="profile-bio">Bio</label>
                     <div class="input-wrapper">
-                        <textarea formControlName="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                        <textarea id="profile-bio" formControlName="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
                     </div>
                 </div>
             </div>
@@ -72,9 +72,9 @@
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Currency</label>
+                    <label for="profile-currency">Currency</label>
                     <div class="input-wrapper">
-                        <select formControlName="currency">
+                        <select id="profile-currency" formControlName="currency">
                             <option value="INR">Indian Rupee (₹)</option>
                             <option value="USD">US Dollar ($)</option>
                             <option value="EUR">Euro (€)</option>
@@ -84,9 +84,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Monthly Budget</label>
+                    <label for="profile-monthly-budget">Monthly Budget</label>
                     <div class="input-wrapper">
-                        <input type="number" formControlName="monthlyBudget" placeholder="0.00">
+                        <input id="profile-monthly-budget" type="number" formControlName="monthlyBudget" placeholder="0.00">
                     </div>
                 </div>
             </div>

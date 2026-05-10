@@ -47,6 +47,10 @@ export class AdminService {
     return this.http.delete<any>(`${this.apiUrl}/users/${userId}`);
   }
 
+  updateRole(userId: number, role: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/users/${userId}/role?role=${role}`, {});
+  }
+
   getTransactions(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/transactions`);
   }

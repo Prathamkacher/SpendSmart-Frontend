@@ -2,20 +2,26 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
+import { ToastService } from './toast.service';
 import { createApiResponse, createAuthResponse, createJwtToken, mockUser } from '../../../testing/test-helpers';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
   let router: jasmine.SpyObj<Router>;
+  let toast: jasmine.SpyObj<ToastService>;
 
   beforeEach(() => {
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    toast = jasmine.createSpyObj<ToastService>('ToastService', ['success']);
     localStorage.clear();
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [{ provide: Router, useValue: router }]
+      providers: [
+        { provide: Router, useValue: router },
+        { provide: ToastService, useValue: toast }
+      ]
     });
 
     service = TestBed.inject(AuthService);
@@ -103,19 +109,16 @@ describe('AuthService', () => {
     expect(localStorage.getItem('refreshToken')).toBe('new-refresh-token');
   });
 
-  it('clears the session after a successful logout', fakeAsync(() => {
+  it('clears the session immediately on logout', () => {
     service.setSession(createAuthResponse());
 
     service.logout();
 
-    const req = httpMock.expectOne('http://localhost:8080/auth/logout');
-    req.flush({});
-    tick(500);
-
     expect(service.currentUser()).toBeNull();
     expect(localStorage.getItem('accessToken')).toBeNull();
-    expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
-  }));
+    expect(toast.success).toHaveBeenCalledWith('Logged out successfully');
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
+  });
 
   it('detects valid and invalid JWTs', () => {
     localStorage.setItem(

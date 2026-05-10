@@ -81,4 +81,38 @@ describe('IncomeFormComponent', () => {
     expect(recurringService.addRecurring).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/income']);
   });
+
+  it('saves non-recurring income and navigates back', () => {
+    component.incomeForm.patchValue({
+      title: 'Bonus',
+      amount: 5000,
+      source: 'OTHER',
+      date: '2026-05-01',
+      isRecurring: false
+    });
+
+    component.onSubmit();
+
+    expect(incomeService.addIncome).toHaveBeenCalled();
+    expect(recurringService.addRecurring).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/income']);
+  });
+
+  it('handles add income error', () => {
+    component.incomeForm.patchValue({
+      title: 'Bonus',
+      amount: 5000,
+      source: 'OTHER',
+      date: '2026-05-01',
+      isRecurring: false
+    });
+    
+    // @ts-ignore
+    incomeService.addIncome.and.returnValue(of({ success: false }));
+
+    component.onSubmit();
+
+    expect(component.loading).toBeFalse();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

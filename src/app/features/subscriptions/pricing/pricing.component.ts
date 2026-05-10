@@ -4,7 +4,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { Router } from '@angular/router';
 
-declare var Razorpay: any;
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => { open(): void };
+  }
+}
 
 @Component({
   selector: 'app-pricing',
@@ -14,6 +18,8 @@ declare var Razorpay: any;
   styleUrls: ['./pricing.component.css']
 })
 export class PricingComponent implements OnInit {
+  private static readonly RAZORPAY_SCRIPT_ID = 'razorpay-checkout-script';
+  private static readonly RAZORPAY_SCRIPT_SRC = 'https://checkout.razorpay.com/v1/checkout.js';
   isYearly = false;
   currentPlan = 'FREE';
   isTrialUsed = false;
@@ -60,9 +66,36 @@ export class PricingComponent implements OnInit {
 
     const planName = this.isYearly ? 'YEARLY' : 'MONTHLY';
     this.subscriptionService.createOrder({ userId: this.userId, planName }).subscribe({
-      next: (order) => {
-        this.openRazorpay(order, planName);
+      next: async (order) => {
+        const isScriptReady = await this.ensureRazorpayLoaded();
+        if (isScriptReady) {
+          this.openRazorpay(order, planName);
+        }
       }
+    });
+  }
+
+  private ensureRazorpayLoaded(): Promise<boolean> {
+    if (window.Razorpay) {
+      return Promise.resolve(true);
+    }
+
+    const existingScript = document.getElementById(PricingComponent.RAZORPAY_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existingScript) {
+      return new Promise((resolve) => {
+        existingScript.addEventListener('load', () => resolve(true), { once: true });
+        existingScript.addEventListener('error', () => resolve(false), { once: true });
+      });
+    }
+
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.id = PricingComponent.RAZORPAY_SCRIPT_ID;
+      script.src = PricingComponent.RAZORPAY_SCRIPT_SRC;
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
     });
   }
 
@@ -85,6 +118,11 @@ export class PricingComponent implements OnInit {
         color: '#16a34a'
       }
     };
+
+    const Razorpay = window.Razorpay;
+    if (!Razorpay) {
+      return;
+    }
 
     const rzp = new Razorpay(options);
     rzp.open();

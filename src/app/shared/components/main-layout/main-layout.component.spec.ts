@@ -61,10 +61,10 @@ describe('MainLayoutComponent', () => {
     expect(component.isMobileMenuOpen).toBeFalse();
   });
 
-  it('logs out and redirects to login', () => {
+  it('logs out and redirects to the landing page', () => {
     component.logout();
     expect(authService.logout).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
   it('routes searches to the expense list', () => {

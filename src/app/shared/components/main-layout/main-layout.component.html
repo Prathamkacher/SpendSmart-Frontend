@@ -1,7 +1,7 @@
-<div class="flex h-screen bg-slate-50 dark:bg-slate-900 font-['Inter'] overflow-hidden transition-colors duration-300">
+<div class="flex h-screen bg-slate-50 dark:bg-slate-900 font-sans overflow-hidden transition-colors duration-300">
   <!-- Mobile Sidebar Overlay -->
   <div *ngIf="isMobileMenuOpen" class="fixed inset-0 z-50 md:hidden">
-    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" (click)="closeMobileMenu()"></div>
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" (click)="closeMobileMenu()" (keydown.enter)="closeMobileMenu()" (keydown.space)="closeMobileMenu(); $event.preventDefault()" tabindex="0" role="button" aria-label="Close mobile menu"></div>
     <aside class="fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
       <!-- Logo Area -->
       <div class="h-20 flex items-center px-6 border-b border-slate-100 dark:border-gray-800 shrink-0">
@@ -70,7 +70,7 @@
         routerLink="/profile"
         class="flex items-center p-2 rounded-xl bg-white dark:bg-gray-800 border border-slate-100 dark:border-gray-700 shadow-sm mb-4 transition-all hover:border-emerald-500/50 hover:dark:shadow-emerald-400/40 dark:hover:shadow-emerald-900/20 cursor-pointer group/user">
         <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold overflow-hidden">
-          <img *ngIf="currentUser()?.avatarUrl" [src]="currentUser()?.avatarUrl" class="w-full h-full object-cover">
+          <img *ngIf="currentUser()?.avatarUrl" [src]="currentUser()?.avatarUrl" alt="Current user avatar" class="w-full h-full object-cover">
           <span *ngIf="!currentUser()?.avatarUrl">{{ (currentUser()?.fullName || 'U').charAt(0).toUpperCase() }}</span>
         </div>
         <div class="ml-3 overflow-hidden">

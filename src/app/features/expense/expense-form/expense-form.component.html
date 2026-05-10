@@ -17,10 +17,11 @@
       <!-- Basic Details -->
       <div class="grid grid-cols-1 gap-6">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Title</label>
+          <label for="expense-title" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Title</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">shopping_bag</span>
             <input 
+              id="expense-title"
               name="title" 
               [(ngModel)]="expense.title" 
               placeholder="What did you buy?" 
@@ -32,10 +33,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Amount ({{ expense.currency }})</label>
+          <label for="expense-amount" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Amount ({{ expense.currency }})</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">payments</span>
             <input 
+              id="expense-amount"
               name="amount" 
               type="number"
               [(ngModel)]="expense.amount" 
@@ -46,10 +48,11 @@
         </div>
 
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Category</label>
+          <label for="expense-category" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Category</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 z-10 pointer-events-none">category</span>
             <select 
+              id="expense-category"
               name="categoryId" 
               [(ngModel)]="expense.categoryId" 
               class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none"
@@ -66,10 +69,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Date (Read-Only)</label>
+          <label for="expense-date" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Date (Read-Only)</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">calendar_month</span>
             <input 
+              id="expense-date"
               name="date" 
               type="date"
               [ngModel]="expense.date" 
@@ -81,10 +85,11 @@
         </div>
 
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Payment Method</label>
+          <label for="expense-payment-method" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Payment Method</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400 z-10 pointer-events-none">wallet</span>
             <select 
+              id="expense-payment-method"
               name="paymentMethod" 
               [(ngModel)]="expense.paymentMethod" 
               class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none"

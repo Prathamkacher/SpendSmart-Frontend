@@ -92,4 +92,39 @@ describe('ReportsComponent', () => {
     component.downloadReport();
     expect(component.isDownloading).toBeFalse();
   });
+
+  it('handles year change', () => {
+    spyOn(component, 'loadData');
+    component.onYearChange({ target: { value: '2025' } });
+    expect(component.currentYear).toBe(2025);
+    expect(component.loadData).toHaveBeenCalled();
+  });
+
+  it('handles month change', () => {
+    spyOn(component, 'loadData');
+    component.onMonthChange({ target: { value: '6' } });
+    expect(component.currentMonth).toBe(6);
+    expect(component.loadData).toHaveBeenCalled();
+  });
+
+  it('gets correct confidence class', () => {
+    expect(component.getConfidenceClass('HIGH')).toContain('emerald');
+    expect(component.getConfidenceClass('MEDIUM')).toContain('amber');
+    expect(component.getConfidenceClass('LOW')).toContain('rose');
+  });
+
+  it('handles empty response data', () => {
+    analyticsService.getMonthlySummary.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getHealthScore.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getForecast.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getTopCategories.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getCategoryBreakdown.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getIncomeVsExpenseTrend.and.returnValue(of(createApiResponse(null as any)));
+    analyticsService.getDailyExpenseTrend.and.returnValue(of(createApiResponse(null as any)));
+
+    component.loadData();
+    
+    expect(component.summary).toBeNull();
+    expect(component.topCategories.length).toBe(0);
+  });
 });

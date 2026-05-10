@@ -27,7 +27,7 @@ export class OAuthSuccessComponent implements OnInit {
 
     try {
       // decode base64
-      const json = atob(sessionBase64.replace(/-/g, '+').replace(/_/g, '/'));
+      const json = atob(sessionBase64.replaceAll('-', '+').replaceAll('_', '/'));
       const data = JSON.parse(json);
 
       // store tokens

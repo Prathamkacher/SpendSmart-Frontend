@@ -1,16 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { AdminComponent } from './admin.component';
 import { AdminService } from '../../core/services/admin.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
-import * as downloadUtils from '../../shared/utils/file-download.utils';
 import { createApiResponse } from '../../../testing/test-helpers';
 
 describe('AdminComponent', () => {
   let fixture: ComponentFixture<AdminComponent>;
   let component: AdminComponent;
   let adminService: jasmine.SpyObj<AdminService>;
+  let authService: jasmine.SpyObj<AuthService>;
   let toastService: jasmine.SpyObj<ToastService>;
 
   beforeEach(async () => {
@@ -21,9 +23,13 @@ describe('AdminComponent', () => {
       'suspendUser',
       'activateUser',
       'deleteUser',
+      'updateRole',
       'sendNotification',
       'exportReport'
     ]);
+    authService = jasmine.createSpyObj<AuthService>('AuthService', ['logout'], {
+      currentUser: signal(null).asReadonly()
+    });
     toastService = jasmine.createSpyObj<ToastService>('ToastService', ['error']);
 
     adminService.getAnalytics.and.returnValue(of(createApiResponse({ totalUsers: 10, totalTransactions: 20, totalExpenses: 300, totalIncome: 500, avgSpendingPerUser: 30, userRegistrationTrend: { '2026-05': 4 } })));
@@ -32,6 +38,7 @@ describe('AdminComponent', () => {
     adminService.suspendUser.and.returnValue(of(createApiResponse(void 0)));
     adminService.activateUser.and.returnValue(of(createApiResponse(void 0)));
     adminService.deleteUser.and.returnValue(of(createApiResponse(void 0)));
+    adminService.updateRole.and.returnValue(of(createApiResponse(void 0)));
     adminService.sendNotification.and.returnValue(of(createApiResponse(void 0)));
     adminService.exportReport.and.returnValue(of(new Blob(['report'])));
 
@@ -39,7 +46,8 @@ describe('AdminComponent', () => {
       imports: [AdminComponent, RouterTestingModule],
       providers: [
         { provide: AdminService, useValue: adminService },
-        { provide: ToastService, useValue: toastService }
+        { provide: ToastService, useValue: toastService },
+        { provide: AuthService, useValue: authService }
       ]
     }).compileComponents();
 
@@ -64,6 +72,50 @@ describe('AdminComponent', () => {
 
     component.loadData();
     expect(toastService.error).toHaveBeenCalledWith('Failed to load analytics');
+  });
+
+  it('switches sections', () => {
+    component.switchSection('users');
+    expect(component.activeSection).toBe('users');
+  });
+
+  it('suspends and activates users', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+
+    component.suspendUser(1);
+    expect(adminService.suspendUser).toHaveBeenCalledWith(1);
+    expect(adminService.getUsers).toHaveBeenCalledTimes(2);
+
+    component.activateUser(1);
+    expect(adminService.activateUser).toHaveBeenCalledWith(1);
+    expect(adminService.getUsers).toHaveBeenCalledTimes(3);
+  });
+
+  it('deletes user if confirmed', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+    component.deleteUser(1);
+    expect(window.confirm).toHaveBeenCalledWith('⚠️ PERMANENT ACTION: Are you sure you want to delete this user? This cannot be undone.');
+    expect(adminService.deleteUser).toHaveBeenCalledWith(1);
+    expect(adminService.getUsers).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not delete user if not confirmed', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+    component.deleteUser(1);
+    expect(adminService.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it('gets registration labels and data', () => {
+    const labels = component.getRegistrationLabels();
+    expect(labels).toEqual(['2026-05']);
+    const data = component.getRegistrationData();
+    expect(data).toEqual([4]);
+  });
+
+  it('handles null analytics for getters', () => {
+    component.analytics = null;
+    expect(component.getRegistrationLabels()).toEqual([]);
+    expect(component.getRegistrationData()).toEqual([]);
   });
 
   it('validates and sends global notifications', () => {

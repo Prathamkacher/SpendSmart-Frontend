@@ -59,16 +59,16 @@
       <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 md:p-8 rounded-2xl md:rounded-[2rem] text-white shadow-xl dark:shadow-emerald-400/40 relative overflow-hidden group">
         <div class="relative z-10">
           <p class="text-[8px] md:text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-0.5 md:mb-2">Balance</p>
-          <h2 class="text-xl md:text-4xl font-black mb-3 md:mb-6">{{ (totalIncome() - totalSpent()) | currency:user()?.currency }}</h2>
+          <h2 class="text-xl md:text-4xl font-black mb-3 md:mb-6">{{ (totalIncome() - totalSpent()) | currency:user()?.currency:'symbol':'1.0-0' }}</h2>
           
           <div class="grid grid-cols-2 gap-2 md:gap-4">
             <div class="bg-white/10 backdrop-blur-md rounded-lg md:rounded-2xl p-1.5 md:p-3 border border-white/20">
               <p class="text-[7px] md:text-[10px] font-bold uppercase opacity-70">Income</p>
-              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalIncome() | currency:user()?.currency }}</p>
+              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalIncome() | currency:user()?.currency:'symbol':'1.0-0' }}</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md rounded-lg md:rounded-2xl p-1.5 md:p-3 border border-white/20">
               <p class="text-[7px] md:text-[10px] font-bold uppercase opacity-70">Spent</p>
-              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalSpent() | currency:user()?.currency }}</p>
+              <p class="text-[10px] md:text-sm font-black leading-tight">{{ totalSpent() | currency:user()?.currency:'symbol':'1.0-0' }}</p>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@
       >
         <div 
           (mouseleave)="onHealthMouseLeave()"
-          [class]="'rounded-2xl md:rounded-[2rem] text-white transition-all duration-700 ease-in-out ' + 
+          [class]="'rounded-2xl md:rounded-[2rem] text-white transition-all duration-700 ease-in-out shadow-xl shadow-blue-500/40 dark:shadow-blue-500/40 ' + 
             (healthScore?.score >= 80 ? 'bg-emerald-600' : 'bg-slate-900') + 
             (showHealthDetails() ? ' absolute top-0 left-0 w-[240px] md:w-[420px] p-3 md:p-8 z-[50] shadow-2xl scale-105 origin-top-left' : ' relative w-full h-full p-3 md:p-8 z-10 scale-100')"
         >
@@ -243,7 +243,7 @@
 
             <!-- Dropdown Menu -->
             @if (isCategoryDropdownOpen) {
-              <div class="fixed inset-0 z-40" (click)="isCategoryDropdownOpen = false"></div>
+              <div class="fixed inset-0 z-40" (click)="isCategoryDropdownOpen = false" (keydown.enter)="isCategoryDropdownOpen = false" (keydown.space)="isCategoryDropdownOpen = false; $event.preventDefault()" tabindex="0" role="button" aria-label="Close category dropdown"></div>
               <div class="absolute z-50 mt-2 min-w-[240px] w-full bg-white dark:bg-gray-900 transition-colors rounded-2xl shadow-xl border border-slate-100 dark:border-gray-800 overflow-hidden">
                 <div class="max-h-48 overflow-y-auto py-2">
                   @for (cat of categories(); track cat.categoryId) {

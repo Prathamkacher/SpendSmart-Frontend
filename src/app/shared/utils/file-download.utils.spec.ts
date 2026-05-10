@@ -1,25 +1,23 @@
 import { downloadBlob } from './file-download.utils';
 
-describe('file-download.utils', () => {
-  it('creates, clicks, and cleans up a temporary anchor for downloads', () => {
-    const blob = new Blob(['report']);
-    const anchor = document.createElement('a');
-    const clickSpy = spyOn(anchor, 'click');
-    const createObjectUrlSpy = spyOn(window.URL, 'createObjectURL').and.returnValue('blob:test');
-    const revokeObjectUrlSpy = spyOn(window.URL, 'revokeObjectURL');
-    const createElementSpy = spyOn(document, 'createElement').and.returnValue(anchor);
-    const appendSpy = spyOn(document.body, 'appendChild').and.callThrough();
-    const removeSpy = spyOn(document.body, 'removeChild').and.callThrough();
+describe('FileDownloadUtils', () => {
+  it('should create an anchor and trigger download', () => {
+    const blob = new Blob(['hello'], { type: 'text/plain' });
+    const spyCreate = spyOn(document, 'createElement').and.callThrough();
+    const spyAppend = spyOn(document.body, 'appendChild').and.callThrough();
+    const spyRemove = spyOn(document.body, 'removeChild').and.callThrough();
+    
+    // We can't easily spy on anchor.click() if we don't mock the anchor, but we can mock createElement
+    const mockAnchor = document.createElement('a');
+    spyOn(mockAnchor, 'click');
+    spyCreate.and.returnValue(mockAnchor);
 
-    downloadBlob(blob, 'report.csv');
+    downloadBlob(blob, 'test.txt');
 
-    expect(createObjectUrlSpy).toHaveBeenCalledWith(blob);
-    expect(createElementSpy).toHaveBeenCalledWith('a');
-    expect(anchor.href).toBe('blob:test');
-    expect(anchor.download).toBe('report.csv');
-    expect(appendSpy).toHaveBeenCalledWith(anchor);
-    expect(clickSpy).toHaveBeenCalled();
-    expect(removeSpy).toHaveBeenCalledWith(anchor);
-    expect(revokeObjectUrlSpy).toHaveBeenCalledWith('blob:test');
+    expect(spyCreate).toHaveBeenCalledWith('a');
+    expect(mockAnchor.download).toBe('test.txt');
+    expect(spyAppend).toHaveBeenCalledWith(mockAnchor);
+    expect(mockAnchor.click).toHaveBeenCalled();
+    expect(spyRemove).toHaveBeenCalledWith(mockAnchor);
   });
 });

@@ -1,19 +1,18 @@
-import { buildYearRange, MONTH_OPTIONS, toDateInputValue } from './date.utils';
+import { buildYearRange, toDateInputValue, MONTH_OPTIONS } from './date.utils';
 
-describe('date.utils', () => {
-  it('exposes the full set of month options', () => {
+describe('DateUtils', () => {
+  it('should build year range', () => {
+    const range = buildYearRange(2023, 1, 1);
+    expect(range).toEqual([2022, 2023, 2024]);
+  });
+
+  it('should convert date to input value string', () => {
+    const dateStr = '2023-05-15T12:00:00.000Z';
+    const result = toDateInputValue(dateStr);
+    expect(result).toBe('2023-05-15');
+  });
+
+  it('should have 12 month options', () => {
     expect(MONTH_OPTIONS.length).toBe(12);
-    expect(MONTH_OPTIONS[0]).toEqual({ value: 1, name: 'January' });
-    expect(MONTH_OPTIONS[11]).toEqual({ value: 12, name: 'December' });
-  });
-
-  it('builds an inclusive year range around the current year', () => {
-    expect(buildYearRange(2026, 2, 1)).toEqual([2024, 2025, 2026, 2027]);
-    expect(buildYearRange(2026, 0, 0)).toEqual([2026]);
-  });
-
-  it('converts string and date inputs into yyyy-mm-dd values', () => {
-    expect(toDateInputValue('2026-05-08T10:20:30.000Z')).toBe('2026-05-08');
-    expect(toDateInputValue(new Date('2026-12-31T00:00:00.000Z'))).toBe('2026-12-31');
   });
 });

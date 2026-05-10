@@ -72,7 +72,7 @@ export class ReportsComponent implements OnInit {
           usePointStyle: true,
           pointStyle: 'circle',
           font: {
-            family: "'Inter', sans-serif",
+            family: "system-ui, sans-serif",
             size: 11,
             weight: 'bold'
           }
@@ -192,11 +192,11 @@ export class ReportsComponent implements OnInit {
         // Calculate changes
         const currInc = currData.income || 0;
         const prevInc = prevData.income || 0;
-        this.incomeChange = prevInc > 0 ? parseFloat(((currInc - prevInc) / prevInc * 100).toFixed(1)) : 0;
+        this.incomeChange = prevInc > 0 ? Number.parseFloat(((currInc - prevInc) / prevInc * 100).toFixed(1)) : 0;
 
         const currExp = currData.expenses || 0;
         const prevExp = prevData.expenses || 0;
-        this.expenseChange = prevExp > 0 ? parseFloat(((currExp - prevExp) / prevExp * 100).toFixed(1)) : 0;
+        this.expenseChange = prevExp > 0 ? Number.parseFloat(((currExp - prevExp) / prevExp * 100).toFixed(1)) : 0;
 
         // Only show the selected month in the graph
         const labels = [currentMonthName];

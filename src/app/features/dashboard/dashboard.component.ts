@@ -167,7 +167,7 @@ export class DashboardComponent implements OnInit {
         const currInc = currData.income || 0;
         const prevInc = prevData.income || 0;
         if (prevInc > 0) {
-          this.incomeChange.set(parseFloat(((currInc - prevInc) / prevInc * 100).toFixed(1)));
+          this.incomeChange.set(Number.parseFloat(((currInc - prevInc) / prevInc * 100).toFixed(1)));
         } else {
           this.incomeChange.set(0);
         }
@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit {
         const currExp = currData.expenses || 0;
         const prevExp = prevData.expenses || 0;
         if (prevExp > 0) {
-          this.expenseChange.set(parseFloat(((currExp - prevExp) / prevExp * 100).toFixed(1)));
+          this.expenseChange.set(Number.parseFloat(((currExp - prevExp) / prevExp * 100).toFixed(1)));
         } else {
           this.expenseChange.set(0);
         }

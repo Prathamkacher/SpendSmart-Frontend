@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminService, PlatformAnalytics, TransactionDTO } from '../../core/services/admin.service';
 import { ToastService } from '../../core/services/toast.service';
+import { AuthService } from '../../core/services/auth.service';
 import { downloadBlob } from '../../shared/utils/file-download.utils';
 
 @Component({
@@ -25,10 +26,12 @@ export class AdminComponent implements OnInit {
   notifSeverity: string = 'INFO';
 
   loading: boolean = false;
+  currentUser = this.authService.currentUser;
 
   constructor(
     private adminService: AdminService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -66,26 +69,49 @@ export class AdminComponent implements OnInit {
   }
 
   suspendUser(userId: number): void {
-    this.adminService.suspendUser(userId).subscribe({
-      next: () => {
-        this.loadData();
-      }
-    });
+    if (confirm('Are you sure you want to suspend this user?')) {
+      this.adminService.suspendUser(userId).subscribe({
+        next: () => this.loadData(),
+        error: (err: any) => {
+          this.toastService.error(err?.error?.message || 'Failed to suspend user');
+        }
+      });
+    }
   }
 
   activateUser(userId: number): void {
-    this.adminService.activateUser(userId).subscribe({
-      next: () => {
-        this.loadData();
-      }
-    });
+    if (confirm('Are you sure you want to reactivate this user?')) {
+      this.adminService.activateUser(userId).subscribe({
+        next: () => this.loadData(),
+        error: (err: any) => {
+          this.toastService.error(err?.error?.message || 'Failed to activate user');
+        }
+      });
+    }
   }
 
   deleteUser(userId: number): void {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (confirm('⚠️ PERMANENT ACTION: Are you sure you want to delete this user? This cannot be undone.')) {
       this.adminService.deleteUser(userId).subscribe({
-        next: () => {
-          this.loadData();
+        next: () => this.loadData(),
+        error: (err: any) => {
+          this.toastService.error(err?.error?.message || 'Failed to delete user');
+        }
+      });
+    }
+  }
+
+  updateRole(userId: number, role: string): void {
+    if (userId === 3) {
+      this.toastService.error('The super-admin role cannot be modified');
+      return;
+    }
+    const action = role === 'ADMIN' ? 'promote' : 'demote';
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+      this.adminService.updateRole(userId, role).subscribe({
+        next: () => this.loadData(),
+        error: (err: any) => {
+          this.toastService.error(err?.error?.message || `Failed to ${action} user`);
         }
       });
     }
@@ -121,7 +147,9 @@ export class AdminComponent implements OnInit {
   }
 
   getRegistrationLabels(): string[] {
-    return this.analytics ? Object.keys(this.analytics.userRegistrationTrend).sort() : [];
+    return this.analytics
+      ? Object.keys(this.analytics.userRegistrationTrend).sort((left, right) => left.localeCompare(right))
+      : [];
   }
 
   getRegistrationData(): number[] {

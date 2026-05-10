@@ -1,65 +1,95 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ProfileService } from './profile.service';
-import { createApiResponse, mockUser } from '../../../testing/test-helpers';
+import { AuthService } from './auth.service';
+import { UserProfile } from '../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 describe('ProfileService', () => {
   let service: ProfileService;
   let httpMock: HttpTestingController;
-  let authServiceSpy: jasmine.SpyObj<any>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  
+  const mockUser: UserProfile = {
+    userId: 1,
+    fullName: 'John Doe',
+    email: 'john@example.com',
+    currency: 'USD',
+    timezone: 'UTC',
+    avatarUrl: 'http://example.com/avatar.jpg',
+    provider: 'LOCAL',
+    role: 'USER',
+    isActive: true,
+    monthlyBudget: 1000,
+    planType: 'FREE',
+    planStartDate: null,
+    planExpiryDate: null,
+    isTrialUsed: false,
+    createdAt: '2026-01-01T00:00:00Z'
+  };
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['updateCurrentUser'], {
-      currentUserValue: mockUser
-    });
+    const spy = jasmine.createSpyObj('AuthService', ['updateCurrentUser']);
+    Object.defineProperty(spy, 'currentUserValue', { get: () => mockUser });
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [{ provide: AuthService, useValue: authServiceSpy }]
+      providers: [
+        ProfileService,
+        { provide: AuthService, useValue: spy }
+      ]
     });
-
     service = TestBed.inject(ProfileService);
     httpMock = TestBed.inject(HttpTestingController);
+    authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
   });
 
-  afterEach(() => httpMock.verify());
-
-  it('fetches the current profile', () => {
-    service.getProfile().subscribe();
-
-    const req = httpMock.expectOne('http://localhost:8080/auth/profile');
-    expect(req.request.method).toBe('GET');
-    req.flush(createApiResponse(mockUser));
+  afterEach(() => {
+    httpMock.verify();
   });
 
-  it('updates the current auth user when profile update succeeds', () => {
-    const updatedUser = {
-      ...mockUser,
-      fullName: 'Updated Name',
-      avatarUrl: 'https://example.com/avatar.png'
-    };
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    service.updateProfile({ fullName: updatedUser.fullName }).subscribe();
-
-    const req = httpMock.expectOne('http://localhost:8080/auth/profile');
-    expect(req.request.method).toBe('PUT');
-    req.flush(createApiResponse(updatedUser));
-
-    expect(authServiceSpy.updateCurrentUser).toHaveBeenCalledWith({
-      ...mockUser,
-      fullName: updatedUser.fullName,
-      avatarUrl: updatedUser.avatarUrl
+  it('should fetch profile', () => {
+    service.getProfile().subscribe(res => {
+      expect(res.data.fullName).toBe('John Doe');
     });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/profile`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ success: true, data: mockUser });
   });
 
-  it('does not update auth state when the backend reports failure', () => {
-    service.updateProfile({ bio: 'New bio' }).subscribe();
+  it('should update profile and notify auth service', () => {
+    const updateData = { fullName: 'Jane Doe', avatarUrl: 'new.jpg' };
+    const responseData = { ...mockUser, ...updateData };
+    
+    service.updateProfile(updateData).subscribe(res => {
+      expect(res.success).toBeTrue();
+      expect(authServiceSpy.updateCurrentUser).toHaveBeenCalledWith({
+        ...mockUser,
+        fullName: 'Jane Doe',
+        avatarUrl: 'new.jpg'
+      });
+    });
 
-    httpMock
-      .expectOne('http://localhost:8080/auth/profile')
-      .flush(createApiResponse({ ...mockUser }, { success: false }));
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/profile`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(updateData);
+    req.flush({ success: true, data: responseData });
+  });
 
-    expect(authServiceSpy.updateCurrentUser).not.toHaveBeenCalled();
+  it('should not update auth service if update fails', () => {
+    const updateData = { fullName: 'Jane Doe' };
+    
+    service.updateProfile(updateData).subscribe(res => {
+      expect(res.success).toBeFalse();
+      expect(authServiceSpy.updateCurrentUser).not.toHaveBeenCalled();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/profile`);
+    req.flush({ success: false, data: null });
   });
 });

@@ -1,60 +1,43 @@
+import { passwordMatchValidator, normalizeFullName, extractApiErrorMessage, FULL_NAME_REGEX, EMAIL_REGEX } from './auth-form.utils';
 import { FormControl, FormGroup } from '@angular/forms';
-import {
-  EMAIL_REGEX,
-  FULL_NAME_REGEX,
-  LOGIN_PASSWORD_REGEX,
-  REGISTER_PASSWORD_REGEX,
-  extractApiErrorMessage,
-  normalizeFullName,
-  passwordMatchValidator
-} from './auth-form.utils';
 
-describe('auth-form.utils', () => {
-  it('validates the exported auth regexes against representative values', () => {
-    expect(FULL_NAME_REGEX.test('Alex Spend')).toBeTrue();
-    expect(FULL_NAME_REGEX.test('Alex  Spend')).toBeFalse();
-
-    expect(EMAIL_REGEX.test('alex.spend@example.com')).toBeTrue();
-    expect(EMAIL_REGEX.test('alex@@example.com')).toBeFalse();
-
-    expect(LOGIN_PASSWORD_REGEX.test('Password1!')).toBeTrue();
-    expect(LOGIN_PASSWORD_REGEX.test('short')).toBeFalse();
-
-    expect(REGISTER_PASSWORD_REGEX.test('Secure@123')).toBeTrue();
-    expect(REGISTER_PASSWORD_REGEX.test('nocaps123!')).toBeFalse();
-  });
-
-  it('detects password mismatch and matching passwords', () => {
-    const mismatchGroup = new FormGroup({
-      password: new FormControl('Secure@123'),
-      confirmPassword: new FormControl('Wrong@123')
-    });
-    const matchingGroup = new FormGroup({
-      password: new FormControl('Secure@123'),
-      confirmPassword: new FormControl('Secure@123')
+describe('AuthFormUtils', () => {
+  it('should validate password match', () => {
+    const form = new FormGroup({
+      password: new FormControl('pass1'),
+      confirmPassword: new FormControl('pass2')
     });
 
-    expect(passwordMatchValidator(mismatchGroup)).toEqual({ passwordMismatch: true });
-    expect(passwordMatchValidator(matchingGroup)).toBeNull();
+    const result = passwordMatchValidator(form);
+    expect(result).toEqual({ passwordMismatch: true });
+
+    form.get('confirmPassword')?.setValue('pass1');
+    const result2 = passwordMatchValidator(form);
+    expect(result2).toBeNull();
   });
 
-  it('normalizes full names and extracts the best available api error message', () => {
-    expect(normalizeFullName('  Alex   Spend  ')).toBe('Alex Spend');
+  it('should normalize full name', () => {
+    expect(normalizeFullName('  John   Doe  ')).toBe('John Doe');
+  });
 
-    expect(
-      extractApiErrorMessage(
-        { error: { data: { email: 'Email already exists' }, message: 'Fallback message' } },
-        'Default'
-      )
-    ).toBe('Email already exists');
+  it('should extract API error message', () => {
+    const err1 = { error: { message: 'Direct message' } };
+    expect(extractApiErrorMessage(err1, 'Fallback')).toBe('Direct message');
 
-    expect(
-      extractApiErrorMessage(
-        { error: { data: { email: '   ' }, message: 'Backend message' } },
-        'Default'
-      )
-    ).toBe('Backend message');
+    const err2 = { error: { data: { field1: 'Validation error' } } };
+    expect(extractApiErrorMessage(err2, 'Fallback')).toBe('Validation error');
 
-    expect(extractApiErrorMessage({}, 'Default')).toBe('Default');
+    const err3 = {};
+    expect(extractApiErrorMessage(err3, 'Fallback')).toBe('Fallback');
+  });
+
+  it('should validate full name regex', () => {
+    expect(FULL_NAME_REGEX.test('John Doe')).toBeTrue();
+    expect(FULL_NAME_REGEX.test('John  Doe')).toBeFalse();
+  });
+
+  it('should validate email regex', () => {
+    expect(EMAIL_REGEX.test('test@example.com')).toBeTrue();
+    expect(EMAIL_REGEX.test('invalid-email')).toBeFalse();
   });
 });

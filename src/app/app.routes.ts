@@ -5,8 +5,12 @@ import { premiumGuard } from './core/guards/premium.guard';
 import { RoleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  // Default redirect
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  // Landing page - public
+  { 
+    path: '', 
+    loadComponent: () => import('./features/landing-page/landing-page.component').then(m => m.LandingPageComponent),
+    pathMatch: 'full'
+  },
 
   // Auth routes — lazy loaded, no JWT needed
   {

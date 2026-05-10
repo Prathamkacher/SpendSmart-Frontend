@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -71,12 +71,14 @@ describe('PricingComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
-  it('opens Razorpay when an upgrade order is created', () => {
+  it('opens Razorpay when an upgrade order is created', fakeAsync(() => {
     const openRazorpaySpy = spyOn<any>(component, 'openRazorpay');
+    spyOn<any>(component, 'ensureRazorpayLoaded').and.returnValue(Promise.resolve(true));
 
     component.upgrade();
+    tick();
 
     expect(subscriptionService.createOrder).toHaveBeenCalled();
     expect(openRazorpaySpy).toHaveBeenCalled();
-  });
+  }));
 });

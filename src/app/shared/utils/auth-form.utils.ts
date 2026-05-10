@@ -21,7 +21,7 @@ export function passwordMatchValidator(
 }
 
 export function normalizeFullName(value: string): string {
-  return value.trim().replace(/\s+/g, ' ');
+  return value.trim().replaceAll(/\s+/g, ' ');
 }
 
 export function extractApiErrorMessage(err: unknown, fallback: string): string {

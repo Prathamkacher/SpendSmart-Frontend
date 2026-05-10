@@ -17,10 +17,11 @@
       <!-- Identity & Category -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Title</label>
+          <label for="budget-name" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Title</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">topic</span>
             <input 
+              id="budget-name"
               name="name" 
               [(ngModel)]="budget.name" 
               placeholder="e.g. Monthly Groceries" 
@@ -30,10 +31,11 @@
         </div>
 
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Target Category</label>
+          <label for="budget-category" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Target Category</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">category</span>
             <select 
+              id="budget-category"
               name="categoryId" 
               [(ngModel)]="budget.categoryId" 
               class="w-full pl-14 pr-10 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-bold text-slate-700 appearance-none cursor-pointer"
@@ -47,10 +49,11 @@
       <!-- Amount & Threshold -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Maximum Limit</label>
+          <label for="budget-limit" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Maximum Limit</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">₹</span>
             <input 
+              id="budget-limit"
               name="limitAmount" 
               [(ngModel)]="budget.limitAmount" 
               type="number" 
@@ -61,10 +64,11 @@
         </div>
 
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Alert at (%)</label>
+          <label for="budget-alert-threshold" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Alert at (%)</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">notifications_active</span>
             <input 
+              id="budget-alert-threshold"
               name="alertThreshold" 
               [(ngModel)]="budget.alertThreshold" 
               type="number" 
@@ -77,7 +81,7 @@
 
       <!-- Period Selection -->
       <div class="space-y-4">
-        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Cycle</label>
+        <span class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Budget Cycle</span>
         <div class="grid grid-cols-3 gap-3 p-1.5 bg-slate-50 dark:bg-slate-900 transition-colors rounded-3xl">
           <button 
             type="button" 
@@ -109,10 +113,11 @@
       <!-- Dates -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Starts On</label>
+          <label for="budget-start-date" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Starts On</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">calendar_today</span>
             <input 
+              id="budget-start-date"
               name="startDate" 
               [(ngModel)]="budget.startDate" 
               type="date" 
@@ -122,10 +127,11 @@
         </div>
 
         <div class="space-y-4">
-          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Ends On</label>
+          <label for="budget-end-date" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Ends On</label>
           <div class="relative">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-rounded text-slate-400">event_busy</span>
             <input 
+              id="budget-end-date"
               name="endDate" 
               [(ngModel)]="budget.endDate" 
               type="date" 

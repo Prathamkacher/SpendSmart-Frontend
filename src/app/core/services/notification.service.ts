@@ -33,8 +33,10 @@ export class NotificationService {
     const user = this.authService.currentUser();
     if (!user) return;
 
-    this.http.get<Notification[]>(`${this.apiUrl}/${user.userId}`).subscribe(res => {
-      this.notifications.set(res);
+    this.http.get<any>(`${this.apiUrl}/${user.userId}`).subscribe(res => {
+      // Handle standard API response wrapper { success: true, data: [...] }
+      const data = res.data || res;
+      this.notifications.set(Array.isArray(data) ? data : []);
       this.updateUnreadCount();
     });
   }

@@ -3,7 +3,7 @@
     <h1 class="premium-text">Choose Your Plan</h1>
     <p class="subtitle">Unlock advanced analytics, custom reports, and smarter savings.</p>
     
-    <div class="billing-toggle" (click)="toggleBilling()">
+    <div class="billing-toggle" (click)="toggleBilling()" (keydown.enter)="toggleBilling()" (keydown.space)="toggleBilling(); $event.preventDefault()" tabindex="0" role="button" aria-label="Toggle yearly billing">
       <span [class.active]="!isYearly">Monthly</span>
       <div class="toggle-track">
         <div class="toggle-thumb" [class.yearly]="isYearly"></div>
@@ -34,7 +34,7 @@
       <div class="popular-badge">Most Popular</div>
       <div class="plan-header">
         <h2>Pro</h2>
-        <div class="price">₹{{ isYearly ? '1499' : '199' }} <span>/ {{ isYearly ? 'year' : 'month' }}</span></div>
+        <div class="price">₹{{ isYearly ? '5499' : '539' }} <span>/ {{ isYearly ? 'year' : 'month' }}</span></div>
       </div>
       <ul class="features">
         <li><span class="material-symbols-rounded">check_circle</span> Everything in Free</li>

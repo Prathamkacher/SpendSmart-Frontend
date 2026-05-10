@@ -132,4 +132,69 @@ describe('ExpenseFormComponent', () => {
     expect(expenseService.updateExpense).toHaveBeenCalledWith(9, component.expense);
     expect(router.navigate).toHaveBeenCalledWith(['/expenses']);
   });
+
+  it('handles update expense error', () => {
+    component.expense = {
+      expenseId: 9,
+      userId: 7,
+      categoryId: 2,
+      title: 'Travel',
+      amount: 3000,
+      currency: 'INR',
+      type: 'EXPENSE' as const,
+      paymentMethod: 'CARD' as const,
+      date: '2026-05-08',
+      isRecurring: false
+    };
+    
+    // @ts-ignore - mock error
+    expenseService.updateExpense.and.returnValue(of({ success: false }));
+
+    component.save();
+
+    expect(component.loading()).toBeFalse();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('saves non-recurring expense and navigates back', () => {
+    component.expense = {
+      userId: 7,
+      categoryId: 2,
+      title: 'Food',
+      amount: 500,
+      currency: 'INR',
+      type: 'EXPENSE' as const,
+      paymentMethod: 'CASH' as const,
+      date: '2026-05-08',
+      isRecurring: false
+    };
+
+    component.save();
+
+    expect(expenseService.addExpense).toHaveBeenCalled();
+    expect(recurringService.addRecurring).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/expenses']);
+  });
+
+  it('handles add expense error', () => {
+    component.expense = {
+      userId: 7,
+      categoryId: 2,
+      title: 'Food',
+      amount: 500,
+      currency: 'INR',
+      type: 'EXPENSE' as const,
+      paymentMethod: 'CASH' as const,
+      date: '2026-05-08',
+      isRecurring: false
+    };
+    
+    // @ts-ignore
+    expenseService.addExpense.and.returnValue(of({ success: false }));
+
+    component.save();
+
+    expect(component.loading()).toBeFalse();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

@@ -76,7 +76,7 @@ export class RecurringFormComponent implements OnInit {
     
     // Ensure numeric amount
     if (typeof this.recurring.amount === 'string') {
-      this.recurring.amount = parseFloat(this.recurring.amount);
+      this.recurring.amount = Number.parseFloat(this.recurring.amount);
     }
     
     // Convert empty string to undefined for endDate

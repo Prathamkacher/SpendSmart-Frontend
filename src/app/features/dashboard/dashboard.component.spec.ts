@@ -137,4 +137,70 @@ describe('DashboardComponent', () => {
     expect(document.getElementById).toHaveBeenCalledWith('add-expense-form');
     expect(scrollSpy).toHaveBeenCalled();
   }));
+
+  it('handles month/year change', () => {
+    spyOn(component, 'loadExpenses');
+    spyOn(component, 'loadTotal');
+    spyOn(component, 'loadIncomeTotal');
+    spyOn(component, 'loadAnalytics');
+
+    component.onMonthYearChange();
+
+    expect(component.loadExpenses).toHaveBeenCalled();
+    expect(component.loadTotal).toHaveBeenCalled();
+    expect(component.loadIncomeTotal).toHaveBeenCalled();
+    expect(component.loadAnalytics).toHaveBeenCalled();
+  });
+
+  it('toggles category dropdown', () => {
+    expect(component.isCategoryDropdownOpen).toBeFalse();
+    component.toggleCategoryDropdown();
+    expect(component.isCategoryDropdownOpen).toBeTrue();
+  });
+
+  it('selects category', () => {
+    spyOn(component, 'onCategoryChange');
+    component.selectCategory(2);
+    expect(component.newExpense.categoryId).toBe(2);
+    expect(component.isCategoryDropdownOpen).toBeFalse();
+    expect(component.onCategoryChange).toHaveBeenCalledWith(2);
+  });
+
+  it('handles health mouse enter/leave', fakeAsync(() => {
+    expect(component.showHealthDetails()).toBeFalse();
+    
+    component.onHealthMouseEnter();
+    tick(2000);
+    expect(component.showHealthDetails()).toBeTrue();
+    
+    component.onHealthMouseLeave();
+    expect(component.showHealthDetails()).toBeFalse();
+  }));
+
+  it('gets health tips based on score', () => {
+    component.healthScore = { score: 85 };
+    expect(component.getHealthTips()[0]).toContain('saving 20%');
+
+    component.healthScore = { score: 65 };
+    expect(component.getHealthTips()[0]).toContain('spend 10% less');
+
+    component.healthScore = { score: 45 };
+    expect(component.getHealthTips()[0]).toContain('budget limits');
+
+    component.healthScore = { score: 20 };
+    expect(component.getHealthTips()[0]).toContain('only what you really need');
+  });
+
+  it('gets health parameters', () => {
+    expect(component.getHealthParameters().length).toBe(3);
+  });
+
+  it('gets category details', () => {
+    fixture.detectChanges(); // Ensures categoriesMap is populated
+    expect(component.getCategoryName(2)).toBe('Food');
+    expect(component.getCategoryName(999)).toBe('UNCATEGORIZED');
+    
+    expect(component.getCategoryIcon(999)).toBe('💳');
+    expect(component.getCategoryColor(999)).toBe('#64748b');
+  });
 });

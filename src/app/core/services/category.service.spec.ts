@@ -1,81 +1,151 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { CategoryService } from './category.service';
-import { createApiResponse } from '../../../testing/test-helpers';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { CategoryService, Category } from './category.service';
+import { environment } from '../../../environments/environment';
 
 describe('CategoryService', () => {
   let service: CategoryService;
   let httpMock: HttpTestingController;
 
+  const mockCategory: Category = {
+    categoryId: 1,
+    userId: 2,
+    name: 'Food',
+    type: 'EXPENSE',
+    icon: 'restaurant',
+    colorCode: '#ff0000',
+    budgetLimit: 500,
+    isDefault: false
+  };
+
+  const mockResponse = {
+    success: true,
+    message: 'Success',
+    data: mockCategory,
+    timestamp: '2023-01-01T00:00:00'
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule],
+      providers: [CategoryService]
     });
-
     service = TestBed.inject(CategoryService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => httpMock.verify());
-
-  it('covers category listing endpoints', () => {
-    expect().nothing();
-
-    service.getCategories().subscribe();
-    httpMock.expectOne('http://localhost:8080/categories').flush(createApiResponse([]));
-
-    service.getCategoriesByType('EXPENSE').subscribe();
-    httpMock
-      .expectOne(
-        request =>
-          request.url === 'http://localhost:8080/categories/type' &&
-          request.params.get('type') === 'EXPENSE'
-      )
-      .flush(createApiResponse([]));
-
-    service.getCategoryById(5).subscribe();
-    httpMock.expectOne('http://localhost:8080/categories/5').flush(createApiResponse({} as any));
-
-    service.getDefaults().subscribe();
-    httpMock.expectOne('http://localhost:8080/categories/defaults').flush(createApiResponse([]));
-
-    service.getCount().subscribe();
-    httpMock.expectOne('http://localhost:8080/categories/count').flush(createApiResponse(3));
+  afterEach(() => {
+    httpMock.verify();
   });
 
-  it('covers category mutation endpoints', () => {
-    const payload = {
-      name: 'Groceries',
-      type: 'EXPENSE' as const,
-      colorCode: '#22c55e',
-      budgetLimit: 15000
-    };
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    service.createCategory(payload).subscribe();
-    const createReq = httpMock.expectOne('http://localhost:8080/categories');
-    expect(createReq.request.method).toBe('POST');
-    createReq.flush(createApiResponse(payload));
+  it('should fetch all categories', () => {
+    const listResponse = { ...mockResponse, data: [mockCategory] };
+    service.getCategories().subscribe(res => {
+      expect(res.data.length).toBe(1);
+      expect(res.data[0].name).toBe('Food');
+    });
 
-    service.updateCategory(8, payload).subscribe();
-    const updateReq = httpMock.expectOne('http://localhost:8080/categories/8');
-    expect(updateReq.request.method).toBe('PUT');
-    updateReq.flush(createApiResponse(payload));
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories`);
+    expect(req.request.method).toBe('GET');
+    req.flush(listResponse);
+  });
 
-    service.setBudget(8, 18000).subscribe();
-    const budgetReq = httpMock.expectOne('http://localhost:8080/categories/8/budget');
-    expect(budgetReq.request.method).toBe('PUT');
-    expect(budgetReq.request.body).toEqual({ budgetLimit: 18000 });
-    budgetReq.flush(createApiResponse({ ...payload, budgetLimit: 18000 }));
+  it('should fetch categories by type', () => {
+    const listResponse = { ...mockResponse, data: [mockCategory] };
+    service.getCategoriesByType('EXPENSE').subscribe(res => {
+      expect(res.data.length).toBe(1);
+    });
 
-    service.initDefaults().subscribe();
-    const initReq = httpMock.expectOne('http://localhost:8080/categories/init');
-    expect(initReq.request.method).toBe('POST');
-    expect(initReq.request.body).toEqual({});
-    initReq.flush(createApiResponse(void 0));
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/type?type=EXPENSE`);
+    expect(req.request.method).toBe('GET');
+    req.flush(listResponse);
+  });
 
-    service.deleteCategory(8).subscribe();
-    const deleteReq = httpMock.expectOne('http://localhost:8080/categories/8');
-    expect(deleteReq.request.method).toBe('DELETE');
-    deleteReq.flush(createApiResponse(void 0));
+  it('should fetch category by id', () => {
+    service.getCategoryById(1).subscribe(res => {
+      expect(res.data.categoryId).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/1`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should create a category', () => {
+    service.createCategory(mockCategory).subscribe(res => {
+      expect(res.data.name).toBe('Food');
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(mockCategory);
+    req.flush(mockResponse);
+  });
+
+  it('should update a category', () => {
+    service.updateCategory(1, mockCategory).subscribe(res => {
+      expect(res.data.name).toBe('Food');
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(mockCategory);
+    req.flush(mockResponse);
+  });
+
+  it('should delete a category', () => {
+    service.deleteCategory(1).subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush({ ...mockResponse, data: null });
+  });
+
+  it('should set budget', () => {
+    service.setBudget(1, 1000).subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/1/budget`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual({ budgetLimit: 1000 });
+    req.flush(mockResponse);
+  });
+
+  it('should get count', () => {
+    service.getCount().subscribe(res => {
+      expect(res.data).toBe(5);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/count`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ ...mockResponse, data: 5 });
+  });
+
+  it('should get defaults', () => {
+    const listResponse = { ...mockResponse, data: [mockCategory] };
+    service.getDefaults().subscribe(res => {
+      expect(res.data.length).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/defaults`);
+    expect(req.request.method).toBe('GET');
+    req.flush(listResponse);
+  });
+
+  it('should init defaults', () => {
+    service.initDefaults().subscribe(res => {
+      expect(res.success).toBeTrue();
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/categories/init`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ ...mockResponse, data: null });
   });
 });

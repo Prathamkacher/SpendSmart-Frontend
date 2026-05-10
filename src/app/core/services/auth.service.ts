@@ -1,5 +1,5 @@
 // src/app/core/services/auth.service.ts
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
@@ -9,13 +9,13 @@ import {
   ApiResponse, UserProfile, ChangePasswordRequest,
   UpdateProfileRequest, RefreshTokenRequest
 } from '../models/auth.models';
-
+import { ToastService } from './toast.service';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   private readonly apiUrl = `${environment.apiUrl}/auth`;
 
-  // Angular signals for reactive state — components subscribe automatically
+  // Angular signals for reactive state â€” components subscribe automatically
   private _currentUser = signal<UserProfile | null>(this.loadUserFromStorage());
   private _isLoading   = signal<boolean>(false);
 
@@ -30,10 +30,10 @@ export class AuthService {
   }
 
   constructor(
+    private toast: ToastService,
     private http: HttpClient,
     private router: Router
   ) {}
-
   setSession(data: any) {
     localStorage.setItem('accessToken',  data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
@@ -46,7 +46,7 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  // ── REGISTER ────────────────────────────────────────────────────
+  // â”€â”€ REGISTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   register(request: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
     this._isLoading.set(true);
     return this.http.post<ApiResponse<AuthResponse>>(
@@ -57,7 +57,7 @@ export class AuthService {
     );
   }
 
-  // ── LOGIN ────────────────────────────────────────────────────────
+  // â”€â”€ LOGIN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   login(request: LoginRequest): Observable<ApiResponse<AuthResponse>> {
     this._isLoading.set(true);
     return this.http.post<ApiResponse<AuthResponse>>(
@@ -68,18 +68,18 @@ export class AuthService {
     );
   }
 
-  // ── LOGOUT ──────────────────────────────────────────────────────
+  // â”€â”€ LOGOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   logout(): void {
-    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
-      next: () => {
-        // Success toast is handled by apiInterceptor
-        setTimeout(() => this.clearSession(), 500);
-      },
-      error: () => this.clearSession()
-    });
+    this.toast.success('Logged out successfully');
+    this.clearSession();
   }
 
-  // ── REFRESH TOKEN ────────────────────────────────────────────────
+
+
+
+
+
+  // â”€â”€ REFRESH TOKEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   refreshToken(): Observable<ApiResponse<AuthResponse>> {
     const refreshToken = this.getRefreshToken();
     const body: RefreshTokenRequest = { refreshToken: refreshToken! };
@@ -90,14 +90,17 @@ export class AuthService {
     );
   }
 
-  // ── GET PROFILE ──────────────────────────────────────────────────
+  // â”€â”€ GET PROFILE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   getProfile(): Observable<ApiResponse<UserProfile>> {
     return this.http.get<ApiResponse<UserProfile>>(`${this.apiUrl}/profile`).pipe(
-      tap(res => this._currentUser.set(res.data))
+      tap(res => {
+        this._currentUser.set(res.data);
+        localStorage.setItem('user', JSON.stringify(res.data));
+      })
     );
   }
 
-  // ── UPDATE PROFILE ───────────────────────────────────────────────
+  // â”€â”€ UPDATE PROFILE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   updateProfile(request: UpdateProfileRequest): Observable<ApiResponse<UserProfile>> {
     return this.http.put<ApiResponse<UserProfile>>(
       `${this.apiUrl}/profile`, request
@@ -109,7 +112,7 @@ export class AuthService {
     );
   }
 
-  // ── CHANGE PASSWORD ──────────────────────────────────────────────
+  // â”€â”€ CHANGE PASSWORD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   changePassword(request: ChangePasswordRequest): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(`${this.apiUrl}/password`, request);
   }
@@ -128,7 +131,7 @@ export class AuthService {
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/reset-password`, { email, otp, newPassword });
   }
 
-  // ── Token helpers (used by JWT interceptor) ──────────────────────
+  // â”€â”€ Token helpers (used by JWT interceptor) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
@@ -149,7 +152,7 @@ export class AuthService {
     }
   }
 
-  // ── Private helpers ──────────────────────────────────────────────
+  // â”€â”€ Private helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   private handleAuthSuccess(data: AuthResponse): void {
     localStorage.setItem('accessToken',  data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
@@ -169,7 +172,7 @@ export class AuthService {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     this._currentUser.set(null);
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/']);
   }
 
   getUserEmail(): string | null {
