@@ -95,7 +95,8 @@ export class ExpenseFormComponent implements OnInit {
                 startDate: res.data.date,
                 nextDueDate: res.data.date,
                 isActive: true,
-                description: res.data.notes
+                description: res.data.notes,
+                skipFirstGeneration: true
               };
               this.recurringService.addRecurring(recurringData).subscribe(() => {
                 this.router.navigate(['/expenses']);

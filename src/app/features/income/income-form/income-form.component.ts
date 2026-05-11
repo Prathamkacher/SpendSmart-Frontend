@@ -143,7 +143,9 @@ export class IncomeFormComponent implements OnInit {
                 startDate: formData.date,
                 nextDueDate: formData.date,
                 isActive: true,
-                description: formData.notes
+                description: formData.notes,
+                incomeSource: formData.source,
+                skipFirstGeneration: true
               };
               this.recurringService.addRecurring(recurringData).subscribe(() => {
                 this.router.navigate(['/income']);
