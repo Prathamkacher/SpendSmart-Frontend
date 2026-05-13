@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://13.48.183.110.nip.io:8080',
-  authApiUrl: 'http://13.48.183.110.nip.io:8080/auth',
+  apiUrl: 'http://13.48.183.110.sslip.io:8080',
+  authApiUrl: 'http://13.48.183.110.sslip.io:8080/auth',
   googleClientId: '660662939415-bltjfdhdfteaht0gi1seus5eu4in6tdj.apps.googleusercontent.com'
 };
