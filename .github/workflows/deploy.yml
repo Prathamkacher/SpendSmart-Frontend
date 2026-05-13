@@ -76,5 +76,6 @@ jobs:
           script: |
             cd ~/spendsmart
             export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             sudo docker-compose --env-file .env -f docker-compose.prod.yml pull frontend
             sudo docker-compose --env-file .env -f docker-compose.prod.yml up -d frontend
