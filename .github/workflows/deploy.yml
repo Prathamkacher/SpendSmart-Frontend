@@ -33,6 +33,7 @@ jobs:
         run: |
           npm run sonar -- \
             -Dsonar.projectKey=spendsmart-frontend \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
