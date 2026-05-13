@@ -1,7 +1,7 @@
 // src/environments/environment.ts  (development)
 export const environment = {
-  production: true,
-  apiUrl: 'http://13.48.183.110.nip.io:8081',
-  authApiUrl: 'http://13.48.183.110.nip.io:8081/api',
-  googleClientId: '660662939415-bltjfdhdfteaht0gi1seus5eu4in6tdj.apps.googleusercontent.com'
+  production: false,
+  apiUrl: 'http://localhost:8080',
+  authApiUrl: 'http://localhost:8081/api',
+  googleClientId: 'YOUR_GOOGLE_CLIENT_ID'
 };
