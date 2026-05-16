@@ -162,8 +162,8 @@
         </div>
         <div class="space-y-3 mb-6">
           @for (b of activeBudgets; track b.budgetId) {
-            <div class="p-3 bg-slate-50 dark:bg-slate-900 transition-colors dark:bg-slate-900 transition-colors rounded-xl flex justify-between items-center group hover:bg-emerald-50 transition-colors">
-              <span class="text-xs font-bold text-slate-700">{{ b.categoryName }}</span>
+            <div class="p-3 bg-slate-50 dark:bg-slate-900 transition-colors rounded-xl flex justify-between items-center group hover:bg-emerald-50 dark:hover:bg-gray-800 transition-colors">
+              <span class="text-xs font-bold text-slate-700 dark:text-gray-300">{{ getCategoryIcon(b.categoryId) }} {{ getCategoryName(b.categoryId) }}</span>
               <span class="text-xs font-black text-emerald-600">{{ b.limitAmount | currency:user()?.currency }}</span>
             </div>
           } @empty {
