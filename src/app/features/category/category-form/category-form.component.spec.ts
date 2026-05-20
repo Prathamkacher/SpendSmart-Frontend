@@ -1,26 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoryFormComponent } from './category-form.component';
 import { CategoryService } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { signal } from '@angular/core';
 
 describe('CategoryFormComponent', () => {
   let component: CategoryFormComponent;
   let fixture: ComponentFixture<CategoryFormComponent>;
   let categoryServiceSpy: jasmine.SpyObj<CategoryService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let authServiceMock: any;
+  let toastServiceSpy: any;
 
   beforeEach(async () => {
-    categoryServiceSpy = jasmine.createSpyObj('CategoryService', ['getCategoryById', 'createCategory', 'updateCategory']);
+    categoryServiceSpy = jasmine.createSpyObj('CategoryService', ['getCategoryById', 'createCategory', 'updateCategory', 'getCategories']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    
+    authServiceMock = {
+      currentUser: signal({ userId: 1, email: 'test@example.com', role: 'USER', planType: 'PRO' })
+    };
+    
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show', 'success', 'error']);
 
     await TestBed.configureTestingModule({
       imports: [CategoryFormComponent, FormsModule, RouterTestingModule],
       providers: [
         { provide: CategoryService, useValue: categoryServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: ToastService, useValue: toastServiceSpy },
         { 
           provide: ActivatedRoute, 
           useValue: { snapshot: { params: { id: 1 } } } 
@@ -33,6 +46,13 @@ describe('CategoryFormComponent', () => {
       message: 'Found',
       timestamp: '2023-01-01',
       data: { categoryId: 1, name: 'Food', type: 'EXPENSE' }
+    }));
+
+    categoryServiceSpy.getCategories.and.returnValue(of({
+      success: true,
+      message: 'Found',
+      timestamp: '2023-01-01',
+      data: []
     }));
 
     fixture = TestBed.createComponent(CategoryFormComponent);

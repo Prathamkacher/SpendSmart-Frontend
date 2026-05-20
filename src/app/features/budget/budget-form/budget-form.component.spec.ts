@@ -5,30 +5,45 @@ import { of } from 'rxjs';
 import { BudgetFormComponent } from './budget-form.component';
 import { BudgetService } from '../../../core/services/budget.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { createApiResponse } from '../../../../testing/test-helpers';
+import { signal } from '@angular/core';
 
 describe('BudgetFormComponent', () => {
   let fixture: ComponentFixture<BudgetFormComponent>;
   let component: BudgetFormComponent;
   let budgetService: jasmine.SpyObj<BudgetService>;
   let router: jasmine.SpyObj<Router>;
+  let authServiceMock: any;
+  let toastServiceSpy: any;
 
   beforeEach(async () => {
     budgetService = jasmine.createSpyObj<BudgetService>('BudgetService', [
       'getBudgetById',
       'createBudget',
-      'updateBudget'
+      'updateBudget',
+      'getActiveBudgets'
     ]);
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    
+    authServiceMock = {
+      currentUser: signal({ userId: 1, email: 'test@example.com', role: 'USER', planType: 'PRO' })
+    };
+    
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show', 'success', 'error']);
 
     budgetService.createBudget.and.returnValue(of(createApiResponse({} as any)));
     budgetService.updateBudget.and.returnValue(of(createApiResponse({} as any)));
+    budgetService.getActiveBudgets.and.returnValue(of(createApiResponse([])));
 
     await TestBed.configureTestingModule({
       imports: [BudgetFormComponent, RouterTestingModule],
       providers: [
         { provide: BudgetService, useValue: budgetService },
         { provide: Router, useValue: router },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: ToastService, useValue: toastServiceSpy },
         {
           provide: CategoryService,
           useValue: {
