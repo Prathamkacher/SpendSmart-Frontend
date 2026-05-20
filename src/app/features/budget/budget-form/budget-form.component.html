@@ -159,4 +159,41 @@
 
     </form>
   </div>
+
+  <!-- Premium Limit Modal -->
+  <div *ngIf="showLimitModal()" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-[2.5rem] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+      
+      <!-- Close Button -->
+      <button (click)="showLimitModal.set(false)" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+        <span class="material-symbols-rounded text-sm">close</span>
+      </button>
+
+      <div class="text-center space-y-6">
+        <!-- Icon Banner -->
+        <div class="inline-flex w-16 h-16 rounded-[1.5rem] bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 items-center justify-center">
+          <span class="material-symbols-rounded text-3xl">workspace_premium</span>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">Free Tier Limit Reached</h2>
+          <p class="text-slate-500 dark:text-gray-400 text-sm font-medium leading-relaxed">
+            Free users can create a maximum of <strong class="text-slate-800 dark:text-white">3 active budgets</strong>. Upgrade to Premium to unlock unlimited active budgets, custom thresholds, and smart spend forecasts!
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-4 flex flex-col space-y-3">
+          <button routerLink="/pricing" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2">
+            <span class="material-symbols-rounded text-lg">bolt</span>
+            <span>Upgrade to Pro Plan</span>
+          </button>
+          <button (click)="showLimitModal.set(false)" class="w-full py-4 bg-slate-50 hover:bg-slate-100 dark:bg-gray-800 dark:hover:bg-gray-700/80 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm transition-colors">
+            Maybe Later
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>

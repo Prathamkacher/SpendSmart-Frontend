@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoryService, Category } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-category-form',
@@ -13,11 +15,14 @@ import { CategoryService, Category } from '../../../core/services/category.servi
 })
 export class CategoryFormComponent implements OnInit {
   private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   isEdit = signal<boolean>(false);
   loading = signal<boolean>(false);
+  showLimitModal = signal<boolean>(false);
   
   category: Category = {
     name: '',
@@ -57,8 +62,32 @@ export class CategoryFormComponent implements OnInit {
 
   save() {
     if (!this.category.name) return;
-    this.loading.set(true);
 
+    if (!this.isEdit() && this.authService.currentUser()?.planType === 'FREE') {
+      this.loading.set(true);
+      this.categoryService.getCategories().subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          const customCount = res.data ? res.data.filter(c => !c.isDefault).length : 0;
+          if (customCount >= 3) {
+            this.showLimitModal.set(true);
+            this.toastService.show('Limit reached! Buy premium to create unlimited categories.', 'warning');
+            return;
+          }
+          this.proceedSave();
+        },
+        error: () => {
+          this.loading.set(false);
+          this.proceedSave();
+        }
+      });
+    } else {
+      this.proceedSave();
+    }
+  }
+
+  private proceedSave() {
+    this.loading.set(true);
     const obs = this.isEdit() 
       ? this.categoryService.updateCategory(this.category.categoryId!, this.category)
       : this.categoryService.createCategory(this.category);

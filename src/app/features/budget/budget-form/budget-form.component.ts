@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BudgetService, Budget } from '../../../core/services/budget.service';
 import { CategoryService, Category } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { toDateInputValue } from '../../../shared/utils/date.utils';
 
 @Component({
@@ -16,11 +18,14 @@ import { toDateInputValue } from '../../../shared/utils/date.utils';
 export class BudgetFormComponent implements OnInit {
   private budgetService = inject(BudgetService);
   private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   isEdit = signal<boolean>(false);
   loading = signal<boolean>(false);
+  showLimitModal = signal<boolean>(false);
   categories = signal<Category[]>([]);
   
   budget: Budget = {
@@ -62,8 +67,32 @@ export class BudgetFormComponent implements OnInit {
 
   save() {
     if (!this.budget.name || this.budget.limitAmount <= 0) return;
-    this.loading.set(true);
 
+    if (!this.isEdit() && this.authService.currentUser()?.planType === 'FREE') {
+      this.loading.set(true);
+      this.budgetService.getActiveBudgets().subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          const activeCount = res.data ? res.data.length : 0;
+          if (activeCount >= 3) {
+            this.showLimitModal.set(true);
+            this.toastService.show('Limit reached! Buy premium to create unlimited budgets.', 'warning');
+            return;
+          }
+          this.proceedSave();
+        },
+        error: () => {
+          this.loading.set(false);
+          this.proceedSave();
+        }
+      });
+    } else {
+      this.proceedSave();
+    }
+  }
+
+  private proceedSave() {
+    this.loading.set(true);
     const obs = this.isEdit() 
       ? this.budgetService.updateBudget(this.budget.budgetId!, this.budget)
       : this.budgetService.createBudget(this.budget);
