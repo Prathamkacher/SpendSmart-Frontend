@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RecurringService, RecurringTransaction } from '../../../core/services/recurring.service';
 import { CategoryService, Category } from '../../../core/services/category.service';
+import { UserCurrencyPipe } from '../../../shared/pipes/user-currency.pipe';
 
 @Component({
   selector: 'app-recurring-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UserCurrencyPipe],
   templateUrl: './recurring-list.component.html',
   styleUrls: ['./recurring-list.component.css']
 })

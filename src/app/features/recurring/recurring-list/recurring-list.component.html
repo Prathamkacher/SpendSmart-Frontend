@@ -65,7 +65,7 @@
           <div class="overflow-hidden">
             <h3 class="text-sm md:text-lg font-black text-slate-800 dark:text-white tracking-tight truncate">{{ txn.title }}</h3>
             <p class="text-[10px] md:text-xs font-bold" [class.text-rose-500]="txn.type === 'EXPENSE'" [class.text-emerald-500]="txn.type === 'INCOME'">
-              {{ txn.type === 'EXPENSE' ? '-' : '+' }}{{ txn.amount | currency:'INR' }}
+              {{ txn.type === 'EXPENSE' ? '-' : '+' }}{{ txn.amount | userCurrency }}
             </p>
           </div>
         </div>

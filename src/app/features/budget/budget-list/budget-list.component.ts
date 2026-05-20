@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { BudgetService, Budget } from '../../../core/services/budget.service';
 import { CategoryService, Category } from '../../../core/services/category.service';
 import { BudgetProgressComponent } from '../budget-progress/budget-progress.component';
+import { UserCurrencyPipe } from '../../../shared/pipes/user-currency.pipe';
 
 @Component({
   selector: 'app-budget-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, BudgetProgressComponent],
+  imports: [CommonModule, RouterModule, BudgetProgressComponent, UserCurrencyPipe],
   templateUrl: './budget-list.component.html',
   styleUrls: ['./budget-list.component.css']
 })

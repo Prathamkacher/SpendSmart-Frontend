@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CategoryService, Category } from '../../../core/services/category.service';
 import { FormsModule } from '@angular/forms';
+import { UserCurrencyPipe } from '../../../shared/pipes/user-currency.pipe';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, UserCurrencyPipe],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.css'
 })

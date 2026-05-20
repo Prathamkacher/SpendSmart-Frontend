@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { BudgetListComponent } from './budget-list.component';
 import { BudgetService } from '../../../core/services/budget.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { createApiResponse } from '../../../../testing/test-helpers';
 
 describe('BudgetListComponent', () => {
@@ -46,6 +47,10 @@ describe('BudgetListComponent', () => {
               .createSpy('getCategories')
               .and.returnValue(of(createApiResponse([{ categoryId: 2, name: 'Food', type: 'EXPENSE' }])))
           }
+        },
+        {
+          provide: AuthService,
+          useValue: { currentUserValue: { currency: 'INR' }, currentUser: () => ({ currency: 'INR', planType: 'FREE' }) }
         }
       ]
     }).compileComponents();

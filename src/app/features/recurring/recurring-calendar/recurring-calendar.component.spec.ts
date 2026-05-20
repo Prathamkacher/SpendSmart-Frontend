@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { RecurringCalendarComponent } from './recurring-calendar.component';
 import { RecurringService, RecurringTransaction } from '../../../core/services/recurring.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { createApiResponse } from '../../../../testing/test-helpers';
 
 describe('RecurringCalendarComponent', () => {
@@ -50,6 +51,10 @@ describe('RecurringCalendarComponent', () => {
         {
           provide: RecurringService,
           useValue: recurringService
+        },
+        {
+          provide: AuthService,
+          useValue: { currentUserValue: { currency: 'INR' }, currentUser: () => ({ currency: 'INR', planType: 'FREE' }) }
         }
       ]
     })

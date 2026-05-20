@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoryListComponent } from './category-list.component';
 import { CategoryService, Category } from '../../../core/services/category.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -30,6 +31,10 @@ describe('CategoryListComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { params: {} } }
+        },
+        {
+          provide: AuthService,
+          useValue: { currentUserValue: { currency: 'INR' }, currentUser: () => ({ currency: 'INR', planType: 'FREE' }) }
         }
       ]
     }).compileComponents();

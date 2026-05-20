@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { RecurringListComponent } from './recurring-list.component';
 import { Category, CategoryService } from '../../../core/services/category.service';
 import { RecurringService, RecurringTransaction } from '../../../core/services/recurring.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { createApiResponse } from '../../../../testing/test-helpers';
 
 describe('RecurringListComponent', () => {
@@ -58,6 +59,10 @@ describe('RecurringListComponent', () => {
         {
           provide: CategoryService,
           useValue: categoryService
+        },
+        {
+          provide: AuthService,
+          useValue: { currentUserValue: { currency: 'INR' }, currentUser: () => ({ currency: 'INR', planType: 'FREE' }) }
         }
       ]
     })

@@ -92,7 +92,7 @@
             <div class="mb-3 md:mb-6">
               <h3 class="text-sm md:text-lg font-black text-slate-800 dark:text-white tracking-tight mb-0.5 md:mb-1 truncate">{{ cat.name }}</h3>
               <p class="text-[9px] md:text-xs font-medium text-slate-400 truncate">
-                {{ cat.budgetLimit ? (cat.budgetLimit | currency:'INR') : 'No limit' }}
+                {{ cat.budgetLimit ? (cat.budgetLimit | userCurrency) : 'No limit' }}
               </p>
             </div>
 

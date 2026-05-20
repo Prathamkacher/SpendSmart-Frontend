@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RecurringService, RecurringTransaction } from '../../../core/services/recurring.service';
+import { UserCurrencyPipe } from '../../../shared/pipes/user-currency.pipe';
 
 interface CalendarDay {
   date: Date;
@@ -12,7 +13,7 @@ interface CalendarDay {
 @Component({
   selector: 'app-recurring-calendar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UserCurrencyPipe],
   templateUrl: './recurring-calendar.component.html',
   styleUrls: ['./recurring-calendar.component.css']
 })

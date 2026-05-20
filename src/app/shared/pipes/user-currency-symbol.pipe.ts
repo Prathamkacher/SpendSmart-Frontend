@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Pipe({
   name: 'userCurrencySymbol',
@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class UserCurrencySymbolPipe implements PipeTransform {
   private authService = inject(AuthService);
 
-  transform(): string {
+  transform(_value?: any): string {
     const code = this.authService.currentUserValue?.currency || 'USD';
     return getCurrencySymbol(code, 'wide');
   }

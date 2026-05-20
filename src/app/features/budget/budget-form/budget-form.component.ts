@@ -7,11 +7,12 @@ import { CategoryService, Category } from '../../../core/services/category.servi
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { toDateInputValue } from '../../../shared/utils/date.utils';
+import { UserCurrencySymbolPipe } from '../../../shared/pipes/user-currency-symbol.pipe';
 
 @Component({
   selector: 'app-budget-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, UserCurrencySymbolPipe],
   templateUrl: './budget-form.component.html',
   styleUrls: ['./budget-form.component.css']
 })
