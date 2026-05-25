@@ -14,7 +14,6 @@ describe('CategoryService', () => {
     type: 'EXPENSE',
     icon: 'restaurant',
     colorCode: '#ff0000',
-    budgetLimit: 500,
     isDefault: false
   };
 
@@ -107,16 +106,6 @@ describe('CategoryService', () => {
     req.flush({ ...mockResponse, data: null });
   });
 
-  it('should set budget', () => {
-    service.setBudget(1, 1000).subscribe(res => {
-      expect(res.success).toBeTrue();
-    });
-
-    const req = httpMock.expectOne(`${environment.apiUrl}/categories/1/budget`);
-    expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual({ budgetLimit: 1000 });
-    req.flush(mockResponse);
-  });
 
   it('should get count', () => {
     service.getCount().subscribe(res => {

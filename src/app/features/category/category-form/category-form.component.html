@@ -79,51 +79,34 @@
         </div>
       </div>
 
-      <!-- Style & Limit -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="space-y-4">
-          <label for="category-color-hex" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Theme Color</label>
-          <div class="flex items-center space-x-3">
-            <div class="relative w-14 h-14 shrink-0">
-              <input 
-                id="category-color-picker"
-                name="colorCode" 
-                [ngModel]="category.colorCode || '#000000'" 
-                (ngModelChange)="category.colorCode = $event"
-                type="color" 
-                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-              >
-              <div
-                aria-hidden="true" 
-                [style.backgroundColor]="category.colorCode" 
-                class="w-full h-full rounded-2xl shadow-inner border-2 border-white flex items-center justify-center"
-              >
-                <span class="material-symbols-rounded text-white/50 text-xl">palette</span>
-              </div>
+      <!-- Style -->
+      <div class="space-y-4">
+        <label for="category-color-hex" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Theme Color</label>
+        <div class="flex items-center space-x-3">
+          <div class="relative w-14 h-14 shrink-0">
+            <input 
+              id="category-color-picker"
+              name="colorCode" 
+              [ngModel]="category.colorCode || '#000000'" 
+              (ngModelChange)="category.colorCode = $event"
+              type="color" 
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            >
+            <div
+              aria-hidden="true" 
+              [style.backgroundColor]="category.colorCode" 
+              class="w-full h-full rounded-2xl shadow-inner border-2 border-white flex items-center justify-center"
+            >
+              <span class="material-symbols-rounded text-white/50 text-xl">palette</span>
             </div>
-            <input 
-              id="category-color-hex"
-              name="colorHex" 
-              [(ngModel)]="category.colorCode" 
-              placeholder="#6366F1" 
-              class="flex-1 px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-xs font-black tracking-widest text-slate-500 dark:text-gray-400"
-            >
           </div>
-        </div>
-
-        <div class="space-y-4">
-          <label for="category-budget-limit" class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Monthly Target</label>
-          <div class="relative">
-            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">{{ '' | userCurrencySymbol }}</span>
-            <input 
-              id="category-budget-limit"
-              name="budgetLimit" 
-              [(ngModel)]="category.budgetLimit" 
-              type="number" 
-              placeholder="0.00" 
-              class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-sm font-black text-slate-800 dark:text-white"
-            >
-          </div>
+          <input 
+            id="category-color-hex"
+            name="colorHex" 
+            [(ngModel)]="category.colorCode" 
+            placeholder="#6366F1" 
+            class="flex-1 px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 transition-colors border-none focus:ring-2 focus:ring-emerald-500/20 text-xs font-black tracking-widest text-slate-500 dark:text-gray-400"
+          >
         </div>
       </div>
 
@@ -157,7 +140,12 @@
         <p class="text-sm font-black text-slate-800 dark:text-white">{{ category.name || 'Your Category' }}</p>
       </div>
     </div>
-    <span class="text-xs font-black text-slate-400">{{ category.budgetLimit | userCurrency }} Limit</span>
+    <span 
+      [class]="category.type === 'EXPENSE' ? 'text-rose-500 bg-rose-50' : 'text-emerald-500 bg-emerald-50'"
+      class="text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest"
+    >
+      {{ category.type }}
+    </span>
   </div>
 
   <!-- Premium Limit Modal -->

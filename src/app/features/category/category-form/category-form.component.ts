@@ -5,13 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { CategoryService, Category } from '../../../core/services/category.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { UserCurrencyPipe } from '../../../shared/pipes/user-currency.pipe';
-import { UserCurrencySymbolPipe } from '../../../shared/pipes/user-currency-symbol.pipe';
 
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, UserCurrencyPipe, UserCurrencySymbolPipe],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './category-form.component.html',
   styleUrls: ['./category-form.component.css']
 })

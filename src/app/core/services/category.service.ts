@@ -55,9 +55,6 @@ export class CategoryService {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 
-  setBudget(id: number, budgetLimit: number): Observable<ApiResponse<Category>> {
-    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/${id}/budget`, { budgetLimit });
-  }
 
   getCount(): Observable<ApiResponse<number>> {
     return this.http.get<ApiResponse<number>>(`${this.apiUrl}/count`);
